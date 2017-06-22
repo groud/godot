@@ -171,11 +171,7 @@ bool GraphNode::has_point(const Point2 &p_point) const {
 
 	if (comment) {
 		Ref<StyleBox> comment = get_stylebox("comment");
-		Ref<Texture> resizer = get_icon("resizer");
 
-		if (Rect2(get_size() - resizer->get_size(), resizer->get_size()).has_point(p_point)) {
-			return true;
-		}
 		if (Rect2(0, 0, get_size().width, comment->get_margin(MARGIN_TOP)).has_point(p_point)) {
 			return true;
 		}
@@ -205,7 +201,6 @@ void GraphNode::_notification(int p_what) {
 		//sb->call("set_modulate",modulate);
 		Ref<Texture> port = get_icon("port");
 		Ref<Texture> close = get_icon("close");
-		Ref<Texture> resizer = get_icon("resizer");
 		int close_offset = get_constant("close_offset");
 		Ref<Font> title_font = get_font("title_font");
 		int title_offset = get_constant("title_offset");
@@ -267,10 +262,6 @@ void GraphNode::_notification(int p_what) {
 				}
 				p->draw(get_canvas_item(), icofs + Point2(get_size().x - edgeofs, cache_y[E->key()]), s.color_right);
 			}
-		}
-
-		if (resizeable) {
-			draw_texture(resizer, get_size() - resizer->get_size());
 		}
 	}
 
@@ -591,35 +582,13 @@ void GraphNode::_gui_input(const Ref<InputEvent> &p_ev) {
 				return;
 			}
 
-			Ref<Texture> resizer = get_icon("resizer");
-
-			if (resizeable && mpos.x > get_size().x - resizer->get_width() && mpos.y > get_size().y - resizer->get_height()) {
-
-				resizing = true;
-				resizing_from = mpos;
-				resizing_from_size = get_size();
-				accept_event();
-				return;
-			}
-
 			//send focus to parent
 			emit_signal("raise_request");
 			get_parent_control()->grab_focus();
 		}
-
-		if (!mb->is_pressed() && mb->get_button_index() == BUTTON_LEFT) {
-			resizing = false;
-		}
 	}
 
-	Ref<InputEventMouseMotion> mm = p_ev;
-	if (resizing && mm.is_valid()) {
-		Vector2 mpos = mm->get_position();
-
-		Vector2 diff = mpos - resizing_from;
-
-		emit_signal("resize_request", resizing_from_size + diff);
-	}
+  GraphNode::_gui_input(p_ev);
 }
 
 void GraphNode::set_overlay(Overlay p_overlay) {
@@ -644,16 +613,6 @@ bool GraphNode::is_comment() const {
 	return comment;
 }
 
-void GraphNode::set_resizeable(bool p_enable) {
-
-	resizeable = p_enable;
-	update();
-}
-
-bool GraphNode::is_resizeable() const {
-
-	return resizeable;
-}
 
 void GraphNode::_bind_methods() {
 
@@ -677,9 +636,6 @@ void GraphNode::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_comment", "comment"), &GraphNode::set_comment);
 	ClassDB::bind_method(D_METHOD("is_comment"), &GraphNode::is_comment);
 
-	ClassDB::bind_method(D_METHOD("set_resizeable", "resizeable"), &GraphNode::set_resizeable);
-	ClassDB::bind_method(D_METHOD("is_resizeable"), &GraphNode::is_resizeable);
-
 	ClassDB::bind_method(D_METHOD("set_selected", "selected"), &GraphNode::set_selected);
 	ClassDB::bind_method(D_METHOD("is_selected"), &GraphNode::is_selected);
 
@@ -701,13 +657,11 @@ void GraphNode::_bind_methods() {
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "title"), "set_title", "get_title");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "show_close"), "set_show_close_button", "is_close_button_visible");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "resizeable"), "set_resizeable", "is_resizeable");
 
 	ADD_SIGNAL(MethodInfo("offset_changed"));
 	ADD_SIGNAL(MethodInfo("dragged", PropertyInfo(Variant::VECTOR2, "from"), PropertyInfo(Variant::VECTOR2, "to")));
 	ADD_SIGNAL(MethodInfo("raise_request"));
 	ADD_SIGNAL(MethodInfo("close_request"));
-	ADD_SIGNAL(MethodInfo("resize_request", PropertyInfo(Variant::VECTOR2, "new_minsize")));
 
 	BIND_CONSTANT(OVERLAY_DISABLED);
 	BIND_CONSTANT(OVERLAY_BREAKPOINT);
@@ -721,7 +675,5 @@ GraphNode::GraphNode() {
 	connpos_dirty = true;
 	set_mouse_filter(MOUSE_FILTER_PASS);
 	comment = false;
-	resizeable = false;
-	resizing = false;
 	selected = false;
 }

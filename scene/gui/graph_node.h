@@ -30,11 +30,11 @@
 #ifndef GRAPH_NODE_H
 #define GRAPH_NODE_H
 
-#include "scene/gui/container.h"
+#include "scene/gui/base_graph_node.h"
 
-class GraphNode : public Container {
+class GraphNode : public BaseGraphNode {
 
-	GDCLASS(GraphNode, Container);
+	GDCLASS(GraphNode, BaseGraphNode);
 
 public:
 	enum Overlay {
@@ -68,11 +68,6 @@ private:
 	bool show_close;
 	Vector2 offset;
 	bool comment;
-	bool resizeable;
-
-	bool resizing;
-	Vector2 resizing_from;
-	Vector2 resizing_from_size;
 
 	Rect2 close_rect;
 
@@ -151,12 +146,7 @@ public:
 	void set_comment(bool p_enable);
 	bool is_comment() const;
 
-	void set_resizeable(bool p_enable);
-	bool is_resizeable() const;
-
 	virtual Size2 get_minimum_size() const;
-
-	bool is_resizing() const { return resizing; }
 
 	GraphNode();
 };

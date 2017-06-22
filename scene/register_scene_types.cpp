@@ -53,6 +53,7 @@
 #include "scene/gui/dialogs.h"
 #include "scene/gui/file_dialog.h"
 #include "scene/gui/graph_edit.h"
+#include "scene/gui/base_graph_node.h"
 #include "scene/gui/graph_node.h"
 #include "scene/gui/grid_container.h"
 #include "scene/gui/item_list.h"
@@ -354,6 +355,7 @@ void register_scene_types() {
 	ClassDB::register_virtual_class<SplitContainer>();
 	ClassDB::register_class<HSplitContainer>();
 	ClassDB::register_class<VSplitContainer>();
+	ClassDB::register_virtual_class<BaseGraphNode>();
 	ClassDB::register_class<GraphNode>();
 	ClassDB::register_class<GraphEdit>();
 

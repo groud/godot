@@ -604,7 +604,6 @@ void fill_default_theme(Ref<Theme> &t, const Ref<Font> &default_font, const Ref<
 	t->set_constant("separation", "GraphNode", 1 * scale);
 	t->set_icon("port", "GraphNode", make_icon(graph_port_png));
 	t->set_icon("close", "GraphNode", make_icon(graph_node_close_png));
-	t->set_icon("resizer", "GraphNode", make_icon(window_resizer_png));
 	t->set_font("title_font", "GraphNode", default_font);
 	t->set_color("title_color", "GraphNode", Color(0, 0, 0, 1));
 	t->set_constant("title_offset", "GraphNode", 20 * scale);
@@ -677,6 +676,11 @@ void fill_default_theme(Ref<Theme> &t, const Ref<Font> &default_font, const Ref<
 	t->set_stylebox("selected_focus", "ItemList", item_selected);
 	t->set_stylebox("cursor", "ItemList", focus);
 	t->set_stylebox("cursor_unfocused", "ItemList", focus);
+
+  // GraphContainer
+	Ref<StyleBoxTexture> sb_rc = make_stylebox(tab_container_bg_png, 4, 4, 4, 4, 7, 7, 7, 7);
+	t->set_stylebox("panel", "GraphContainer", sb_rc);
+	t->set_constant("scaleborder_size", "GraphContainer", 4 * scale);
 
 	// TabContainer
 

@@ -366,6 +366,9 @@ Ref<Theme> create_editor_theme() {
 	style_window->_set_additional_border_size(MARGIN_TOP, 24 * EDSCALE);
 	theme->set_stylebox("panel", "WindowDialog", style_window);
 
+  // ResizableContainer
+	theme->set_stylebox("panel", "ResizableContainer", style_window);
+
 	// HScrollBar
 	Ref<Texture> empty_icon = memnew(ImageTexture);
 

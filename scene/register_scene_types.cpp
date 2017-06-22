@@ -125,6 +125,8 @@
 
 #include "scene/resources/tile_set.h"
 
+#include "scene/state_machine_player.h"
+
 #include "scene/animation/animation_player.h"
 #include "scene/animation/animation_tree_player.h"
 #include "scene/animation/tween.h"
@@ -396,6 +398,7 @@ void register_scene_types() {
 	ClassDB::register_virtual_class<SpatialGizmo>();
 	ClassDB::register_class<Skeleton>();
 	ClassDB::register_class<AnimationPlayer>();
+	ClassDB::register_class<StateMachinePlayer>();
 	ClassDB::register_class<Tween>();
 
 	OS::get_singleton()->yield(); //may take time to init
@@ -575,6 +578,7 @@ void register_scene_types() {
 	ClassDB::register_class<GradientTexture>();
 	ClassDB::register_class<CubeMap>();
 	ClassDB::register_class<Animation>();
+	ClassDB::register_class<StateMachine>();
 	ClassDB::register_virtual_class<Font>();
 	ClassDB::register_class<BitmapFont>();
 

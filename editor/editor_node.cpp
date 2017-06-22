@@ -65,6 +65,7 @@
 #include "import/resource_importer_scene.h"
 #include "import/resource_importer_texture.h"
 #include "import/resource_importer_wav.h"
+#include "plugins/state_machine_editor_plugin.h"
 #include "plugins/animation_player_editor_plugin.h"
 #include "plugins/animation_tree_editor_plugin.h"
 #include "plugins/baked_light_editor_plugin.h"
@@ -6060,6 +6061,7 @@ EditorNode::EditorNode() {
 	file_server = memnew(EditorFileServer);
 
 	add_editor_plugin(memnew(AnimationPlayerEditorPlugin(this)));
+	add_editor_plugin(memnew(StateMachineEditorPlugin(this)));
 	add_editor_plugin(memnew(CanvasItemEditorPlugin(this)));
 	add_editor_plugin(memnew(SpatialEditorPlugin(this)));
 	add_editor_plugin(memnew(ScriptEditorPlugin(this)));

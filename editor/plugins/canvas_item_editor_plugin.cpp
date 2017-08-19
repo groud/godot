@@ -1435,7 +1435,7 @@ void CanvasItemEditor::_viewport_gui_input(const Ref<InputEvent> &p_event) {
 
 				// Drag anchor handles
 				Control *control = canvas_item->cast_to<Control>();
-				if (control && !control->get_parent()->cast_to<Container>()) {
+				if (control && show_helpers && !control->get_parent()->cast_to<Container>()) {
 					drag = _get_anchor_handle_drag_type(click, drag_point_from);
 					if (drag != DRAG_NONE) {
 						drag_from = transform.affine_inverse().xform(click);
@@ -2043,7 +2043,8 @@ void CanvasItemEditor::_viewport_draw() {
 				can_move_pivot = true;
 				pivot_found = true;
 
-				if (tool == TOOL_SELECT && !control->get_parent()->cast_to<Container>()) {
+				if (tool == TOOL_SELECT && show_helpers && !control->get_parent()->cast_to<Container>()) {
+					// Draw the helpers
 					Color color_base = Color(0.8, 0.8, 0.8, 0.5);
 
 					float anchors_values[4];
@@ -2755,6 +2756,12 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 			skeleton_show_bones = !skeleton_show_bones;
 			int idx = skeleton_menu->get_item_index(SKELETON_SHOW_BONES);
 			skeleton_menu->set_item_checked(idx, skeleton_show_bones);
+			viewport->update();
+		} break;
+		case SHOW_HELPERS: {
+			show_helpers = !show_helpers;
+			int idx = view_menu->get_popup()->get_item_index(SHOW_HELPERS);
+			view_menu->get_popup()->set_item_checked(idx, show_helpers);
 			viewport->update();
 		} break;
 		case ZOOM_IN: {
@@ -3609,6 +3616,7 @@ CanvasItemEditor::CanvasItemEditor(EditorNode *p_editor) {
 
 	p = view_menu->get_popup();
 
+	p->add_check_shortcut(ED_SHORTCUT("canvas_item_editor/show_helpers", TTR("Show helpers")), SHOW_HELPERS);
 	p->add_shortcut(ED_SHORTCUT("canvas_item_editor/zoom_in", TTR("Zoom In")), ZOOM_IN);
 	p->add_shortcut(ED_SHORTCUT("canvas_item_editor/zoom_out", TTR("Zoom Out")), ZOOM_OUT);
 	p->add_shortcut(ED_SHORTCUT("canvas_item_editor/zoom_reset", TTR("Zoom Reset")), ZOOM_RESET);
@@ -3712,6 +3720,7 @@ CanvasItemEditor::CanvasItemEditor(EditorNode *p_editor) {
 	key_rot = true;
 	key_scale = false;
 
+	show_helpers = false;
 	zoom = 1;
 	snap_offset = Vector2(0, 0);
 	snap_step = Vector2(10, 10);

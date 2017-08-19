@@ -86,6 +86,7 @@ class CanvasItemEditor : public VBoxContainer {
 		SNAP_RELATIVE,
 		SNAP_CONFIGURE,
 		SNAP_USE_PIXEL,
+		SHOW_HELPERS,
 		ZOOM_IN,
 		ZOOM_OUT,
 		ZOOM_RESET,
@@ -175,6 +176,7 @@ class CanvasItemEditor : public VBoxContainer {
 	HBoxContainer *hb;
 
 	Transform2D transform;
+	bool show_helpers;
 	float zoom;
 	Vector2 snap_offset;
 	Vector2 snap_step;

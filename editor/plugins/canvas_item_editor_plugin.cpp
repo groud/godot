@@ -1434,7 +1434,8 @@ void CanvasItemEditor::_viewport_gui_input(const Ref<InputEvent> &p_event) {
 				}
 
 				// Drag anchor handles
-				if (canvas_item->cast_to<Control>()) {
+				Control *control = canvas_item->cast_to<Control>();
+				if (control && !control->get_parent()->cast_to<Container>()) {
 					drag = _get_anchor_handle_drag_type(click, drag_point_from);
 					if (drag != DRAG_NONE) {
 						drag_from = transform.affine_inverse().xform(click);
@@ -2042,7 +2043,7 @@ void CanvasItemEditor::_viewport_draw() {
 				can_move_pivot = true;
 				pivot_found = true;
 
-				if (tool == TOOL_SELECT) {
+				if (tool == TOOL_SELECT && !control->get_parent()->cast_to<Container>()) {
 					Color color_base = Color(0.8, 0.8, 0.8, 0.5);
 
 					float anchors_values[4];

@@ -87,10 +87,6 @@ class CanvasItemEditor : public VBoxContainer {
 		SNAP_CONFIGURE,
 		SNAP_USE_PIXEL,
 		SHOW_HELPERS,
-		ZOOM_IN,
-		ZOOM_OUT,
-		ZOOM_RESET,
-		ZOOM_SET,
 		LOCK_SELECTED,
 		UNLOCK_SELECTED,
 		GROUP_SELECTED,
@@ -174,6 +170,10 @@ class CanvasItemEditor : public VBoxContainer {
 	HScrollBar *h_scroll;
 	VScrollBar *v_scroll;
 	HBoxContainer *hb;
+
+	ToolButton *zoom_minus;
+	ToolButton *zoom_reset;
+	ToolButton *zoom_plus;
 
 	Transform2D transform;
 	bool show_helpers;
@@ -319,10 +319,6 @@ class CanvasItemEditor : public VBoxContainer {
 
 	ConfirmationDialog *snap_dialog;
 
-	AcceptDialog *value_dialog;
-	Label *dialog_label;
-	SpinBox *dialog_val;
-
 	CanvasItem *ref_item;
 
 	void _edit_set_pivot(const Vector2 &mouse_pos);
@@ -349,7 +345,6 @@ class CanvasItemEditor : public VBoxContainer {
 	void incend(float &beg, float &end, float inc, float minsize, bool p_symmetric);
 
 	void _append_canvas_item(CanvasItem *p_item);
-	void _dialog_value_changed(double);
 	void _snap_changed();
 	void _selection_result_pressed(int);
 	void _selection_menu_hide();
@@ -379,6 +374,10 @@ class CanvasItemEditor : public VBoxContainer {
 
 	void _set_anchors_preset(Control::LayoutPreset p_preset);
 	void _set_full_rect();
+
+	void _zoom_minus();
+	void _zoom_reset();
+	void _zoom_plus();
 
 	HSplitContainer *palette_split;
 	VSplitContainer *bottom_split;

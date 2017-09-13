@@ -3559,6 +3559,16 @@ void CanvasItemEditor::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_selection_result_pressed"), &CanvasItemEditor::_selection_result_pressed);
 	ClassDB::bind_method(D_METHOD("_selection_menu_hide"), &CanvasItemEditor::_selection_menu_hide);
 
+	ClassDB::bind_method(D_METHOD("snap_point", "target_position", "modes", "node"), &CanvasItemEditor::snap_point);
+
+	BIND_ENUM_CONSTANT(SNAP_GRID);
+	BIND_ENUM_CONSTANT(SNAP_PIXEL);
+	BIND_ENUM_CONSTANT(SNAP_NODE_PARENT);
+	BIND_ENUM_CONSTANT(SNAP_NODE_ANCHORS);
+	BIND_ENUM_CONSTANT(SNAP_NODE_SIDES);
+	BIND_ENUM_CONSTANT(SNAP_OTHER_NODES);
+	BIND_ENUM_CONSTANT(SNAP_DEFAULT);
+
 	ADD_SIGNAL(MethodInfo("item_lock_status_changed"));
 	ADD_SIGNAL(MethodInfo("item_group_status_changed"));
 }

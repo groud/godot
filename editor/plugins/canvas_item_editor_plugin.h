@@ -454,6 +454,8 @@ public:
 	CanvasItemEditor(EditorNode *p_editor);
 };
 
+VARIANT_ENUM_CAST(CanvasItemEditor::SnapMode);
+
 class CanvasItemEditorPlugin : public EditorPlugin {
 
 	GDCLASS(CanvasItemEditorPlugin, EditorPlugin);

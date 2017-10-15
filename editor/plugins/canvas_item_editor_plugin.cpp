@@ -324,14 +324,13 @@ Point2 CanvasItemEditor::snap_point(Point2 p_target, unsigned int p_modes, const
 	if (((snap_active && snap_grid && (p_modes & SNAP_GRID)) || (p_forced_modes & SNAP_GRID)) && rotation == 0.0) {
 		// Grid
 		Point2 offset = grid_offset;
-		if (snap_relative) {
-			List<Node *> &selection = editor_selection->get_selected_node_list();
-			if (selection.size() == 1 && Object::cast_to<Node2D>(selection[0])) {
-				offset = Object::cast_to<Node2D>(selection[0])->get_global_position();
-			} else {
-				offset = _find_topleftmost_point();
-			}
+
+		if (snap_relative && get_item_count() > 0) {
+			Vector2 topleft = _find_topleftmost_point();
+			offset.x = fmod(topleft.x, grid_step.x * Math::pow(2.0, grid_step_multiplier));
+			offset.y = fmod(topleft.y, grid_step.y * Math::pow(2.0, grid_step_multiplier));
 		}
+
 		Point2 grid_output;
 		grid_output.x = Math::stepify(p_target.x - offset.x, grid_step.x * Math::pow(2.0, grid_step_multiplier)) + offset.x;
 		grid_output.y = Math::stepify(p_target.y - offset.y, grid_step.y * Math::pow(2.0, grid_step_multiplier)) + offset.y;
@@ -993,13 +992,8 @@ void CanvasItemEditor::_prepare_drag(const Point2 &p_click_pos) {
 		se->pre_drag_rect = canvas_item->get_item_rect();
 	}
 
-	if (selection.size() == 1 && Object::cast_to<Node2D>(selection[0]) && bone_ik_list.size() == 0) {
-		drag = DRAG_NODE_2D;
-		drag_point_from = Object::cast_to<Node2D>(selection[0])->get_global_position();
-	} else {
-		drag = DRAG_ALL;
-		drag_point_from = _find_topleftmost_point();
-	}
+	drag = DRAG_ALL;
+	drag_point_from = _find_topleftmost_point();
 	drag_from = transform.affine_inverse().xform(p_click_pos);
 }
 
@@ -1191,7 +1185,6 @@ void CanvasItemEditor::_update_cursor() {
 			c = CURSOR_BDIAGSIZE;
 			break;
 		case DRAG_ALL:
-		case DRAG_NODE_2D:
 			c = CURSOR_MOVE;
 			break;
 	}
@@ -1715,7 +1708,6 @@ void CanvasItemEditor::_viewport_base_gui_input(const Ref<InputEvent> &p_event) 
 
 			switch (drag) {
 				case DRAG_ALL:
-				case DRAG_NODE_2D:
 					dto -= drag_from - drag_point_from;
 					if (uniform) {
 						if (ABS(dto.x - drag_point_from.x) > ABS(dto.y - drag_point_from.y)) {
@@ -1863,12 +1855,6 @@ void CanvasItemEditor::_viewport_base_gui_input(const Ref<InputEvent> &p_event) 
 					if (Object::cast_to<Control>(canvas_item)) {
 						Object::cast_to<Control>(canvas_item)->set_pivot_offset(se->undo_pivot + drag_vector);
 					}
-					continue;
-					break;
-				case DRAG_NODE_2D:
-
-					ERR_FAIL_COND(!Object::cast_to<Node2D>(canvas_item));
-					Object::cast_to<Node2D>(canvas_item)->set_global_position(dto);
 					continue;
 					break;
 			}

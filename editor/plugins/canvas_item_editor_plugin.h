@@ -182,7 +182,6 @@ class CanvasItemEditor : public VBoxContainer {
 		DRAG_ALL,
 		DRAG_ROTATE,
 		DRAG_PIVOT,
-		DRAG_NODE_2D,
 	};
 
 	enum KeyMoveMODE {

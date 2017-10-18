@@ -381,14 +381,14 @@ void CanvasItemEditor::_unhandled_key_input(const Ref<InputEvent> &p_ev) {
 			// Multiply the grid size
 			grid_step_multiplier = MIN(grid_step_multiplier + 1, 12);
 			viewport_base->update();
-			viewport->update();
+			//viewport->update();
 		} else if ((snap_grid || show_grid) && divide_grid_step_shortcut.is_valid() && divide_grid_step_shortcut->is_shortcut(p_ev)) {
 			// Divide the grid size
 			Point2 new_grid_step = grid_step * Math::pow(2.0, grid_step_multiplier - 1);
 			if (new_grid_step.x >= 1.0 && new_grid_step.y >= 1.0)
 				grid_step_multiplier--;
 			viewport_base->update();
-			viewport->update();
+			//viewport->update();
 		}
 	}
 }
@@ -400,7 +400,7 @@ void CanvasItemEditor::_tool_select(int p_index) {
 		tb[i]->set_pressed(i == p_index);
 	}
 
-	viewport->update();
+	//viewport->update();
 	tool = (Tool)p_index;
 }
 
@@ -545,7 +545,7 @@ void CanvasItemEditor::set_state(const Dictionary &p_state) {
 		skeleton_menu->get_popup()->set_item_checked(idx, skeleton_show_bones);
 	}
 
-	viewport->update();
+	//viewport->update();
 }
 
 void CanvasItemEditor::_add_canvas_item(CanvasItem *p_canvas_item) {
@@ -663,7 +663,7 @@ void CanvasItemEditor::_find_canvas_items_at_rect(const Rect2 &p_rect, Node *p_n
 void CanvasItemEditor::_select_click_on_empty_area(Point2 p_click_pos, bool p_append, bool p_box_selection) {
 	if (!p_append) {
 		editor_selection->clear();
-		viewport->update();
+		//viewport->update();
 		viewport_base->update();
 	};
 
@@ -703,7 +703,7 @@ bool CanvasItemEditor::_select_click_on_item(CanvasItem *item, Point2 p_click_po
 		_prepare_drag(p_click_pos);
 	}
 
-	viewport->update();
+	//viewport->update();
 	viewport_base->update();
 	return still_selected;
 }
@@ -1067,7 +1067,7 @@ void CanvasItemEditor::_snap_changed() {
 	((SnapDialog *)snap_dialog)->get_fields(grid_offset, grid_step, snap_rotation_offset, snap_rotation_step);
 	grid_step_multiplier = 0;
 	viewport_base->update();
-	viewport->update();
+	//viewport->update();
 }
 
 void CanvasItemEditor::_selection_result_pressed(int p_result) {
@@ -1222,7 +1222,7 @@ void CanvasItemEditor::_viewport_base_gui_input(const Ref<InputEvent> &p_event) 
 			if (bool(EditorSettings::get_singleton()->get("editors/2d/scroll_to_pan"))) {
 				v_scroll->set_value(v_scroll->get_value() + int(EditorSettings::get_singleton()->get("editors/2d/pan_speed")) / zoom * b->get_factor());
 				_update_scroll(0);
-				viewport->update();
+				//viewport->update();
 			} else {
 				_zoom_on_position(zoom * (1 - (0.05 * b->get_factor())), viewport_scrollable->get_transform().affine_inverse().xform(b->get_position()));
 			}
@@ -1235,7 +1235,7 @@ void CanvasItemEditor::_viewport_base_gui_input(const Ref<InputEvent> &p_event) 
 			if (bool(EditorSettings::get_singleton()->get("editors/2d/scroll_to_pan"))) {
 				v_scroll->set_value(v_scroll->get_value() - int(EditorSettings::get_singleton()->get("editors/2d/pan_speed")) / zoom * b->get_factor());
 				_update_scroll(0);
-				viewport->update();
+				//viewport->update();
 			} else {
 				_zoom_on_position(zoom * ((0.95 + (0.05 * b->get_factor())) / 0.95), viewport_scrollable->get_transform().affine_inverse().xform(b->get_position()));
 			}
@@ -1299,13 +1299,13 @@ void CanvasItemEditor::_viewport_base_gui_input(const Ref<InputEvent> &p_event) 
 				}
 
 				drag = DRAG_NONE;
-				viewport->update();
+				//viewport->update();
 				can_move_pivot = false;
 
 			} else if (box_selecting) {
 				// Cancel box selection
 				box_selecting = false;
-				viewport->update();
+				//viewport->update();
 			}
 			return;
 		}
@@ -1394,7 +1394,7 @@ void CanvasItemEditor::_viewport_base_gui_input(const Ref<InputEvent> &p_event) 
 				}
 
 				drag = DRAG_NONE;
-				viewport->update();
+				//viewport->update();
 				can_move_pivot = false;
 			}
 
@@ -1421,7 +1421,7 @@ void CanvasItemEditor::_viewport_base_gui_input(const Ref<InputEvent> &p_event) 
 				}
 
 				box_selecting = false;
-				viewport->update();
+				//viewport->update();
 			}
 			return;
 		}
@@ -1566,7 +1566,7 @@ void CanvasItemEditor::_viewport_base_gui_input(const Ref<InputEvent> &p_event) 
 		if ((b->get_alt() || tool == TOOL_MOVE) && get_item_count()) {
 			// Drag the nodes
 			_prepare_drag(click);
-			viewport->update();
+			//viewport->update();
 			return;
 		}
 
@@ -1627,7 +1627,7 @@ void CanvasItemEditor::_viewport_base_gui_input(const Ref<InputEvent> &p_event) 
 		if (box_selecting) {
 			// Update box selection
 			box_selecting_to = transform.affine_inverse().xform(viewport_scrollable->get_transform().affine_inverse().xform(m->get_position()));
-			viewport->update();
+			//viewport->update();
 			return;
 		}
 
@@ -1687,7 +1687,7 @@ void CanvasItemEditor::_viewport_base_gui_input(const Ref<InputEvent> &p_event) 
 						node->set_rotation(snap_angle(angle + (dfrom - center).angle_to(dto - center), angle));
 						display_rotate_to = dto;
 						display_rotate_from = center;
-						viewport->update();
+						//viewport->update();
 					}
 				}
 
@@ -1699,7 +1699,7 @@ void CanvasItemEditor::_viewport_base_gui_input(const Ref<InputEvent> &p_event) 
 						node->set_rotation(snap_angle(angle + (dfrom - center).angle_to(dto - center), angle));
 						display_rotate_to = dto;
 						display_rotate_from = center;
-						viewport->update();
+						//viewport->update();
 					}
 				}
 
@@ -2014,7 +2014,7 @@ void CanvasItemEditor::_viewport_base_gui_input(const Ref<InputEvent> &p_event) 
 				_key_move(Vector2(1, 0), k->get_shift(), move_mode);
 			else if (k->get_scancode() == KEY_ESCAPE) {
 				editor_selection->clear();
-				viewport->update();
+				//viewport->update();
 			} else
 				return;
 
@@ -2690,7 +2690,6 @@ void CanvasItemEditor::_draw_viewport() {
 void CanvasItemEditor::_notification(int p_what) {
 
 	if (p_what == NOTIFICATION_PHYSICS_PROCESS) {
-
 		EditorNode::get_singleton()->get_scene_root()->set_snap_controls_to_pixels(GLOBAL_GET("gui/common/snap_controls_to_pixels"));
 
 		List<Node *> &selection = editor_selection->get_selected_node_list();
@@ -2720,7 +2719,7 @@ void CanvasItemEditor::_notification(int p_what) {
 			Transform2D xform = canvas_item->get_transform();
 
 			if (r != se->prev_rect || xform != se->prev_xform) {
-				viewport->update();
+				//viewport->update();
 				se->prev_rect = r;
 				se->prev_xform = xform;
 			}
@@ -2736,7 +2735,7 @@ void CanvasItemEditor::_notification(int p_what) {
 				anchors[MARGIN_BOTTOM] = Object::cast_to<Control>(canvas_item)->get_anchor(MARGIN_BOTTOM);
 
 				if (pivot != se->prev_pivot || anchors[MARGIN_LEFT] != se->prev_anchors[MARGIN_LEFT] || anchors[MARGIN_RIGHT] != se->prev_anchors[MARGIN_RIGHT] || anchors[MARGIN_TOP] != se->prev_anchors[MARGIN_TOP] || anchors[MARGIN_BOTTOM] != se->prev_anchors[MARGIN_BOTTOM]) {
-					viewport->update();
+					//viewport->update();
 					viewport_base->update();
 					se->prev_pivot = pivot;
 					se->prev_anchors[MARGIN_LEFT] = anchors[MARGIN_LEFT];
@@ -2757,7 +2756,7 @@ void CanvasItemEditor::_notification(int p_what) {
 			Object *b = ObjectDB::get_instance(E->get().bone);
 			if (!b) {
 
-				viewport->update();
+				//viewport->update();
 				break;
 			}
 
@@ -2769,7 +2768,7 @@ void CanvasItemEditor::_notification(int p_what) {
 			if (b2->get_global_transform() != E->get().xform) {
 
 				E->get().xform = b2->get_global_transform();
-				viewport->update();
+				//viewport->update();
 			}
 		}
 	}
@@ -2867,14 +2866,16 @@ void CanvasItemEditor::_notification(int p_what) {
 
 void CanvasItemEditor::edit(CanvasItem *p_canvas_item) {
 
+	printf("EDIT canvas item\n");
+
 	drag = DRAG_NONE;
 
 	// Clear the selection
-	editor_selection->clear(); //_clear_canvas_items();
-	editor_selection->add_node(p_canvas_item);
+	//editor_selection->clear(); //_clear_canvas_items();
+	//editor_selection->add_node(p_canvas_item);
 	//_add_canvas_item(p_canvas_item);
-	viewport->update();
-	viewport_base->update();
+	//viewport->update();
+	//viewport_base->update();
 }
 
 void CanvasItemEditor::_update_scrollbars() {
@@ -2989,7 +2990,7 @@ void CanvasItemEditor::_update_scroll(float) {
 
 	editor->get_scene_root()->set_global_canvas_transform(transform);
 
-	viewport->update();
+	//viewport->update();
 	viewport_base->update();
 }
 
@@ -3067,7 +3068,7 @@ void CanvasItemEditor::_zoom_on_position(float p_zoom, Point2 p_position) {
 	v_scroll->set_value(v_scroll->get_value() + ofs.y);
 
 	_update_scroll(0);
-	viewport->update();
+	//viewport->update();
 	viewport_base->update();
 }
 
@@ -3085,7 +3086,7 @@ void CanvasItemEditor::_zoom_plus() {
 
 void CanvasItemEditor::_toggle_snap(bool p_status) {
 	snap_active = p_status;
-	viewport->update();
+	//viewport->update();
 	viewport_base->update();
 }
 
@@ -3098,7 +3099,7 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 			show_grid = !show_grid;
 			int idx = view_menu->get_popup()->get_item_index(SHOW_GRID);
 			view_menu->get_popup()->set_item_checked(idx, show_grid);
-			viewport->update();
+			//viewport->update();
 			viewport_base->update();
 		} break;
 		case SNAP_USE_NODE_PARENT: {
@@ -3135,7 +3136,7 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 			snap_relative = !snap_relative;
 			int idx = snap_config_menu->get_popup()->get_item_index(SNAP_RELATIVE);
 			snap_config_menu->get_popup()->set_item_checked(idx, snap_relative);
-			viewport->update();
+			//viewport->update();
 			viewport_base->update();
 		} break;
 		case SNAP_USE_PIXEL: {
@@ -3151,19 +3152,19 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 			skeleton_show_bones = !skeleton_show_bones;
 			int idx = skeleton_menu->get_popup()->get_item_index(SKELETON_SHOW_BONES);
 			skeleton_menu->get_popup()->set_item_checked(idx, skeleton_show_bones);
-			viewport->update();
+			//viewport->update();
 		} break;
 		case SHOW_HELPERS: {
 			show_helpers = !show_helpers;
 			int idx = view_menu->get_popup()->get_item_index(SHOW_HELPERS);
 			view_menu->get_popup()->set_item_checked(idx, show_helpers);
-			viewport->update();
+			//viewport->update();
 		} break;
 		case SHOW_RULERS: {
 			show_rulers = !show_rulers;
 			int idx = view_menu->get_popup()->get_item_index(SHOW_RULERS);
 			view_menu->get_popup()->set_item_checked(idx, show_rulers);
-			viewport->update();
+			//viewport->update();
 			viewport_base->update();
 		} break;
 
@@ -3183,7 +3184,7 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 				canvas_item->set_meta("_edit_lock_", true);
 				emit_signal("item_lock_status_changed");
 			}
-			viewport->update();
+			//viewport->update();
 		} break;
 		case UNLOCK_SELECTED: {
 
@@ -3202,7 +3203,7 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 				emit_signal("item_lock_status_changed");
 			}
 
-			viewport->update();
+			//viewport->update();
 
 		} break;
 		case GROUP_SELECTED: {
@@ -3221,7 +3222,7 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 				canvas_item->set_meta("_edit_group_", true);
 				emit_signal("item_group_status_changed");
 			}
-			viewport->update();
+			//viewport->update();
 		} break;
 		case UNGROUP_SELECTED: {
 
@@ -3240,7 +3241,7 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 				emit_signal("item_group_status_changed");
 			}
 
-			viewport->update();
+			//viewport->update();
 
 		} break;
 
@@ -3562,7 +3563,7 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 				if (!skeleton_show_bones)
 					skeleton_menu->get_popup()->activate_item(skeleton_menu->get_popup()->get_item_index(SKELETON_SHOW_BONES));
 			}
-			viewport->update();
+			//viewport->update();
 
 		} break;
 		case SKELETON_CLEAR_BONES: {
@@ -3581,7 +3582,7 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 				if (!skeleton_show_bones)
 					skeleton_menu->get_popup()->activate_item(skeleton_menu->get_popup()->get_item_index(SKELETON_SHOW_BONES));
 			}
-			viewport->update();
+			//viewport->update();
 
 		} break;
 		case SKELETON_SET_IK_CHAIN: {
@@ -3602,7 +3603,7 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 					skeleton_menu->get_popup()->activate_item(skeleton_menu->get_popup()->get_item_index(SKELETON_SHOW_BONES));
 			}
 
-			viewport->update();
+			//viewport->update();
 
 		} break;
 		case SKELETON_CLEAR_IK_CHAIN: {
@@ -3621,7 +3622,7 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 				if (!skeleton_show_bones)
 					skeleton_menu->get_popup()->activate_item(skeleton_menu->get_popup()->get_item_index(SKELETON_SHOW_BONES));
 			}
-			viewport->update();
+			//viewport->update();
 
 		} break;
 	}
@@ -3729,7 +3730,7 @@ CanvasItemEditor::CanvasItemEditor(EditorNode *p_editor) {
 	editor = p_editor;
 	editor_selection = p_editor->get_editor_selection();
 	editor_selection->add_editor_plugin(this);
-	editor_selection->connect("selection_changed", this, "update");
+	//editor_selection->connect("selection_changed", this, "update");
 
 	hb = memnew(HBoxContainer);
 	add_child(hb);

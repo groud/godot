@@ -151,8 +151,6 @@ void AbstractPolygon2DEditor::_node_removed(Node *p_node) {
 	if (p_node == _get_node()) {
 		edit(NULL);
 		hide();
-
-		canvas_item_editor->get_viewport_control()->update();
 	}
 }
 
@@ -533,8 +531,6 @@ void AbstractPolygon2DEditor::edit(Node *p_polygon) {
 		wip.clear();
 		wip_active = false;
 		edited_point = -1;
-
-		canvas_item_editor->get_viewport_control()->update();
 
 	} else {
 

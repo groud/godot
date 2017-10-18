@@ -177,12 +177,6 @@ void Line2DEditor::_canvas_draw() {
 	}
 }
 
-void Line2DEditor::_node_visibility_changed() {
-	if (!node)
-		return;
-	canvas_item_editor->get_viewport_control()->update();
-}
-
 void Line2DEditor::edit(Node *p_line2d) {
 
 	if (!canvas_item_editor)
@@ -192,21 +186,15 @@ void Line2DEditor::edit(Node *p_line2d) {
 		node = Object::cast_to<Line2D>(p_line2d);
 		if (!canvas_item_editor->get_viewport_control()->is_connected("draw", this, "_canvas_draw"))
 			canvas_item_editor->get_viewport_control()->connect("draw", this, "_canvas_draw");
-		if (!node->is_connected("visibility_changed", this, "_node_visibility_changed"))
-			node->connect("visibility_changed", this, "_node_visibility_changed");
 	} else {
 		if (canvas_item_editor->get_viewport_control()->is_connected("draw", this, "_canvas_draw"))
 			canvas_item_editor->get_viewport_control()->disconnect("draw", this, "_canvas_draw");
-		// node may have been deleted at this point
-		if (node && node->is_connected("visibility_changed", this, "_node_visibility_changed"))
-			node->disconnect("visibility_changed", this, "_node_visibility_changed");
 		node = NULL;
 	}
 }
 
 void Line2DEditor::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_canvas_draw"), &Line2DEditor::_canvas_draw);
-	ClassDB::bind_method(D_METHOD("_node_visibility_changed"), &Line2DEditor::_node_visibility_changed);
 	ClassDB::bind_method(D_METHOD("_mode_selected"), &Line2DEditor::_mode_selected);
 }
 

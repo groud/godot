@@ -85,7 +85,6 @@ class Path2DEditor : public HBoxContainer {
 	void _mode_selected(int p_mode);
 
 	void _canvas_draw();
-	void _node_visibility_changed();
 	friend class Path2DEditorPlugin;
 
 protected:

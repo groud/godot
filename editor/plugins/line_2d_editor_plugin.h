@@ -57,7 +57,6 @@ protected:
 private:
 	void _mode_selected(int p_mode);
 	void _canvas_draw();
-	void _node_visibility_changed();
 
 	int get_point_index_at(Vector2 gpos);
 	Vector2 mouse_to_local_pos(Vector2 gpos, bool alt);

@@ -313,13 +313,6 @@ void Path2DEditor::_canvas_draw() {
 	}
 }
 
-void Path2DEditor::_node_visibility_changed() {
-	if (!node)
-		return;
-
-	canvas_item_editor->get_viewport_control()->update();
-}
-
 void Path2DEditor::edit(Node *p_path2d) {
 
 	if (!canvas_item_editor) {
@@ -331,8 +324,6 @@ void Path2DEditor::edit(Node *p_path2d) {
 		node = Object::cast_to<Path2D>(p_path2d);
 		if (!canvas_item_editor->get_viewport_control()->is_connected("draw", this, "_canvas_draw"))
 			canvas_item_editor->get_viewport_control()->connect("draw", this, "_canvas_draw");
-		if (!node->is_connected("visibility_changed", this, "_node_visibility_changed"))
-			node->connect("visibility_changed", this, "_node_visibility_changed");
 
 	} else {
 
@@ -340,8 +331,6 @@ void Path2DEditor::edit(Node *p_path2d) {
 			canvas_item_editor->get_viewport_control()->disconnect("draw", this, "_canvas_draw");
 
 		// node may have been deleted at this point
-		if (node && node->is_connected("visibility_changed", this, "_node_visibility_changed"))
-			node->disconnect("visibility_changed", this, "_node_visibility_changed");
 		node = NULL;
 	}
 }
@@ -350,7 +339,6 @@ void Path2DEditor::_bind_methods() {
 
 	//ClassDB::bind_method(D_METHOD("_menu_option"),&Path2DEditor::_menu_option);
 	ClassDB::bind_method(D_METHOD("_canvas_draw"), &Path2DEditor::_canvas_draw);
-	ClassDB::bind_method(D_METHOD("_node_visibility_changed"), &Path2DEditor::_node_visibility_changed);
 	ClassDB::bind_method(D_METHOD("_mode_selected"), &Path2DEditor::_mode_selected);
 }
 

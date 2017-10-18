@@ -51,12 +51,12 @@ void LightOccluder2DEditor::_notification(int p_what) {
 		} break;
 	}
 }
+
 void LightOccluder2DEditor::_node_removed(Node *p_node) {
 
 	if (p_node == node) {
 		node = NULL;
 		hide();
-		canvas_item_editor->get_viewport_control()->update();
 	}
 }
 
@@ -373,7 +373,6 @@ void LightOccluder2DEditor::edit(Node *p_collision_polygon) {
 		wip.clear();
 		wip_active = false;
 		edited_point = -1;
-		canvas_item_editor->get_viewport_control()->update();
 	} else {
 		node = NULL;
 

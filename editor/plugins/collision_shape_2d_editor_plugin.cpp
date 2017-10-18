@@ -546,8 +546,6 @@ void CollisionShape2DEditor::edit(Node *p_node) {
 
 		node = NULL;
 	}
-
-	canvas_item_editor->get_viewport_control()->update();
 }
 
 void CollisionShape2DEditor::_bind_methods() {

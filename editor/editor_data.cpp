@@ -815,7 +815,7 @@ void EditorSelection::add_node(Node *p_node) {
 
 	p_node->connect("tree_exited", this, "_node_removed", varray(p_node), CONNECT_ONESHOT);
 
-	//emit_signal("selection_changed");
+	emit_signal("selection_changed");
 }
 
 void EditorSelection::remove_node(Node *p_node) {
@@ -832,7 +832,7 @@ void EditorSelection::remove_node(Node *p_node) {
 		memdelete(meta);
 	selection.erase(p_node);
 	p_node->disconnect("tree_exited", this, "_node_removed");
-	//emit_signal("selection_changed");
+	emit_signal("selection_changed");
 }
 bool EditorSelection::is_selected(Node *p_node) const {
 

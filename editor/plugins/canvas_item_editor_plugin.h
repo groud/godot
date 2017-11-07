@@ -49,9 +49,6 @@ class CanvasItemEditorSelectedItem : public Object {
 	GDCLASS(CanvasItemEditorSelectedItem, Object);
 
 public:
-	Variant undo_state;
-	Vector2 undo_pivot;
-
 	Transform2D prev_xform;
 	float prev_rot;
 	Rect2 prev_rect;
@@ -60,6 +57,8 @@ public:
 
 	Transform2D pre_drag_xform;
 	Rect2 pre_drag_rect;
+
+	Variant undo_state;
 
 	CanvasItemEditorSelectedItem() { prev_rot = 0; }
 };
@@ -168,6 +167,7 @@ class CanvasItemEditor : public VBoxContainer {
 
 	enum DragType {
 		DRAG_NONE,
+		DRAG_BOX_SELECTION,
 		DRAG_LEFT,
 		DRAG_TOP_LEFT,
 		DRAG_TOP,
@@ -197,12 +197,11 @@ class CanvasItemEditor : public VBoxContainer {
 	};
 
 	EditorSelection *editor_selection;
-	bool additive_selection;
+	bool selection_menu_additive_selection;
 
 	Tool tool;
 	bool first_update;
 	Control *viewport;
-	Control *viewport_base;
 	Control *viewport_scrollable;
 
 	bool can_move_pivot;
@@ -239,8 +238,6 @@ class CanvasItemEditor : public VBoxContainer {
 	bool snap_relative;
 	bool snap_pixel;
 	bool skeleton_show_bones;
-	bool box_selecting;
-	Point2 box_selecting_to;
 	bool key_pos;
 	bool key_rot;
 	bool key_scale;
@@ -266,7 +263,6 @@ class CanvasItemEditor : public VBoxContainer {
 		Transform2D xform;
 		Vector2 from;
 		Vector2 to;
-		ObjectID bone;
 		uint64_t last_pass;
 	};
 
@@ -343,6 +339,8 @@ class CanvasItemEditor : public VBoxContainer {
 	int edited_guide_index;
 	Point2 edited_guide_pos;
 
+	Point2 box_selecting_to;
+
 	Ref<StyleBoxTexture> select_sb;
 	Ref<Texture> select_handle;
 	Ref<Texture> anchor_handle;
@@ -356,22 +354,19 @@ class CanvasItemEditor : public VBoxContainer {
 	bool _is_part_of_subscene(CanvasItem *p_item);
 	void _find_canvas_items_at_pos(const Point2 &p_pos, Node *p_node, const Transform2D &p_parent_xform, const Transform2D &p_canvas_xform, Vector<_SelectResult> &r_items, int limit = 0);
 	void _find_canvas_items_at_rect(const Rect2 &p_rect, Node *p_node, const Transform2D &p_parent_xform, const Transform2D &p_canvas_xform, List<CanvasItem *> *r_items);
-
-	void _select_click_on_empty_area(Point2 p_click_pos, bool p_append, bool p_box_selection);
 	bool _select_click_on_item(CanvasItem *item, Point2 p_click_pos, bool p_append, bool p_drag);
 
 	ConfirmationDialog *snap_dialog;
 
 	CanvasItem *ref_item;
 
-	void _edit_set_pivot(const Vector2 &mouse_pos);
 	void _add_canvas_item(CanvasItem *p_canvas_item);
 	void _remove_canvas_item(CanvasItem *p_canvas_item);
 	void _clear_canvas_items();
 	void _key_move(const Vector2 &p_dir, bool p_snap, KeyMoveMODE p_move_mode);
-	void _list_select(const Ref<InputEventMouseButton> &b);
 
 	DragType _get_resize_handle_drag_type(const Point2 &p_click, Vector2 &r_point);
+	void _save_canvas_item_state(CanvasItem *p_canvas_item);
 	void _prepare_drag(const Point2 &p_click_pos);
 	DragType _get_anchor_handle_drag_type(const Point2 &p_click, Vector2 &r_point);
 
@@ -421,10 +416,19 @@ class CanvasItemEditor : public VBoxContainer {
 	void _draw_locks_and_groups(Node *p_node, const Transform2D &p_xform);
 
 	void _draw_viewport();
-	void _draw_viewport_base();
+
+	bool _gui_input_anchors(const Ref<InputEvent> &p_event);
+	bool _gui_input_bones(const Ref<InputEvent> &p_event);
+	bool _gui_input_move(const Ref<InputEvent> &p_event);
+	bool _gui_input_open_scene_on_double_click(const Ref<InputEvent> &p_event);
+	bool _gui_input_pivot(const Ref<InputEvent> &p_event);
+	bool _gui_input_resize(const Ref<InputEvent> &p_event);
+	bool _gui_input_rotate(const Ref<InputEvent> &p_event);
+	bool _gui_input_select(const Ref<InputEvent> &p_event);
+	bool _gui_input_zoom_or_pan(const Ref<InputEvent> &p_event);
+	bool _gui_input_rulers_and_guides(const Ref<InputEvent> &p_event);
 
 	void _gui_input_viewport(const Ref<InputEvent> &p_event);
-	void _gui_input_viewport_base(const Ref<InputEvent> &p_event);
 
 	void _focus_selection(int p_op);
 
@@ -436,6 +440,7 @@ class CanvasItemEditor : public VBoxContainer {
 	void _set_margins_preset(Control::LayoutPreset p_preset);
 	void _set_anchors_and_margins_preset(Control::LayoutPreset p_preset);
 
+	HBoxContainer *zoom_hb;
 	void _zoom_on_position(float p_zoom, Point2 p_position = Point2());
 	void _zoom_minus();
 	void _zoom_reset();

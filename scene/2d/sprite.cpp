@@ -33,18 +33,52 @@
 #include "scene/main/viewport.h"
 #include "scene/scene_string_names.h"
 
-void Sprite::_edit_set_pivot(const Point2 &p_pivot) {
+Dictionary Sprite::_edit_get_state() const {
+	Dictionary state = Node2D::_edit_get_state();
+	state["offset"] = offset;
+	return state;
+}
 
-	set_offset(p_pivot);
+void Sprite::_edit_set_state(const Dictionary &p_state) {
+	Node2D::_edit_set_state(p_state);
+	set_offset(p_state["offset"]);
+}
+
+void Sprite::_edit_set_pivot(const Point2 &p_pivot) {
+	set_position(get_transform().xform(p_pivot));
+	set_offset(get_offset() - p_pivot);
 }
 
 Point2 Sprite::_edit_get_pivot() const {
-
-	return get_offset();
+	return Vector2();
 }
-bool Sprite::_edit_use_pivot() const {
 
+bool Sprite::_edit_use_pivot() const {
 	return true;
+}
+
+Rect2 Sprite::_edit_get_rect() const {
+	if (texture.is_null())
+		return Node2D::_edit_get_rect();
+
+	Size2 s;
+
+	if (region) {
+
+		s = region_rect.size;
+	} else {
+		s = texture->get_size();
+		s = s / Point2(hframes, vframes);
+	}
+
+	Point2 ofs = offset;
+	if (centered)
+		ofs -= s / 2;
+
+	if (s == Size2(0, 0))
+		s = Size2(1, 1);
+
+	return Rect2(ofs, s);
 }
 
 void Sprite::_notification(int p_what) {
@@ -255,35 +289,6 @@ void Sprite::set_hframes(int p_amount) {
 int Sprite::get_hframes() const {
 
 	return hframes;
-}
-
-Rect2 Sprite::_edit_get_rect() const {
-
-	if (texture.is_null())
-		return Rect2(0, 0, 1, 1);
-	/*
-	if (texture.is_null())
-		return CanvasItem::_edit_get_rect();
-	*/
-
-	Size2i s;
-
-	if (region) {
-
-		s = region_rect.size;
-	} else {
-		s = texture->get_size();
-		s = s / Point2(hframes, vframes);
-	}
-
-	Point2 ofs = offset;
-	if (centered)
-		ofs -= s / 2;
-
-	if (s == Size2(0, 0))
-		s = Size2(1, 1);
-
-	return Rect2(ofs, s);
 }
 
 void Sprite::_validate_property(PropertyInfo &property) const {

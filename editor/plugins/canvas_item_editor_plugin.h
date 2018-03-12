@@ -257,6 +257,7 @@ class CanvasItemEditor : public VBoxContainer {
 	};
 
 	Vector<_SelectResult> selection_results;
+	Vector<_SelectResult> hovering_results;
 
 	struct BoneList {
 
@@ -388,6 +389,7 @@ class CanvasItemEditor : public VBoxContainer {
 	void _draw_bones();
 	void _draw_invisible_nodes_positions(Node *p_node, const Transform2D &p_parent_xform = Transform2D(), const Transform2D &p_canvas_xform = Transform2D());
 	void _draw_locks_and_groups(Node *p_node, const Transform2D &p_parent_xform = Transform2D(), const Transform2D &p_canvas_xform = Transform2D());
+	void _draw_hover();
 
 	void _draw_viewport();
 
@@ -400,6 +402,7 @@ class CanvasItemEditor : public VBoxContainer {
 	bool _gui_input_select(const Ref<InputEvent> &p_event);
 	bool _gui_input_zoom_or_pan(const Ref<InputEvent> &p_event);
 	bool _gui_input_rulers_and_guides(const Ref<InputEvent> &p_event);
+	bool _gui_input_hover(const Ref<InputEvent> &p_event);
 
 	void _gui_input_viewport(const Ref<InputEvent> &p_event);
 

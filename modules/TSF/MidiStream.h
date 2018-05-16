@@ -8,18 +8,21 @@
 class MidiStream : public AudioStream {
 	GDCLASS(MidiStream, AudioStream);
 private:
-	friend class AudioStreamPlaybackMidiStream;
+	friend class MidiStreamPlayer;
 	uint64_t pos;
-	bool stereo;
 	int sample_rate;
-	int samples;
-	short* buffer;
-	int flag_mixing;
+	int samples_count;
+	
+	
 public:
-	tsf * f;
 	char* sf_filename;
 	float gain;
 	int note;
 	int vel;
 	int index;
+	void set_position(uint64_t pos);
+	virtual Ref<AudioStreamPlayback> instance_playback();
+	static void AudioCallBack(void* data, short *stream, int len);
+	short* buffer;
+	
 };

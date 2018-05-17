@@ -11,7 +11,6 @@ private:
 	friend class MidiStreamPlayer;
 	uint64_t pos;
 	int sample_rate;
-	int samples_count;
 	
 	
 public:
@@ -19,10 +18,11 @@ public:
 	float gain;
 	int note;
 	int vel;
-	int index;
-	void set_position(uint64_t pos);
+
 	virtual Ref<AudioStreamPlayback> instance_playback();
-	static void AudioCallBack(void* data, short *stream, int len);
-	short* buffer;
+	void set_output(enum TSFOutputMode outputmode, int samplerate, float global_gain_db);
+    float* buffer;
+	void render_to_buffer(void* data, float* buffer, int len);
+	
 	
 };

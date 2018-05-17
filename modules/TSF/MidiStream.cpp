@@ -15,7 +15,7 @@ MidiStream::MidiStream()
 };
 
 Ref<AudioStreamPlayback> MidiStream::instance_playback() {
-	Ref<MidiStreamPlayer> talking_tree;
+	Ref<MidiStreamPlayback> talking_tree;
 	talking_tree.instance();
 	talking_tree->base=Ref<MidiStream>(this);
 	return talking_tree;

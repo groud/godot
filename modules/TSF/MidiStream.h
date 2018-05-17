@@ -8,7 +8,7 @@
 class MidiStream : public AudioStream {
 	GDCLASS(MidiStream, AudioStream);
 private:
-	friend class MidiStreamPlayer;
+	friend class MidiStreamPlayback;
 	uint64_t pos;
 	int sample_rate;
 	

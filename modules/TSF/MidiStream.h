@@ -14,15 +14,14 @@ private:
 	
 	
 public:
+	tsf * TSFpointer;
 	char* sf_filename;
 	float gain;
 	int note;
 	int vel;
-
+	void note_on(int n,int v);
 	virtual Ref<AudioStreamPlayback> instance_playback();
 	void set_output(enum TSFOutputMode outputmode, int samplerate, float global_gain_db);
     float* buffer;
-	void render_to_buffer(void* data, float* buffer, int len);
-	
-	
+	void buffer_function(float* b);
 };

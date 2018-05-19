@@ -11,11 +11,11 @@ private:
 	friend class MidiStreamPlayback;
 	uint64_t pos;
 	int sample_rate;
-	
-	
+
 public:
 	tsf * TSFpointer;
 	char* sf_filename;
+	void set_filename(char* filename);
 	float gain;
 	int note;
 	int vel;
@@ -24,4 +24,5 @@ public:
 	void set_output(enum TSFOutputMode outputmode, int samplerate, float global_gain_db);
     float* buffer;
 	void buffer_function(float* b);
+	MidiStream();
 };

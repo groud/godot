@@ -1,24 +1,29 @@
 #include "tsf.h"
-#include "reference.h"
-#include "resource.h"
+
 #include "servers/audio/audio_stream.h"
 #include "MidiStream.h"
 #define TSF_IMPLEMENTATION
 
 
+MidiStream::MidiStream(){
+	sample_rate=44100;
+	note = 50;
+	vel = 50;
+	sf_filename = "florestan-subset.sf2";
+}
 
-MidiStream::MidiStream()
-	:sample_rate(44100), gain(-10), note(50), vel(60)
-
-{
-
-};
 
 Ref<AudioStreamPlayback> MidiStream::instance_playback() {
 	Ref<MidiStreamPlayback> talking_tree;
 	talking_tree.instance();
-	talking_tree->base=Ref<MidiStream>(this);
+	talking_tree->base = Ref<MidiStream>(this);
 	return talking_tree;
+}
+
+void MidiStream::set_filename(char* filename) {
+	filename = sf_filename;
+	tsf_load_filename(filename);
+
 }
 
 void MidiStream::buffer_function(float* b){

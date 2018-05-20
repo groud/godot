@@ -28,4 +28,25 @@ void MidiStreamPlayback::stop() {
 	base->reset();
 }
 
+void MidiStreamPlayback::seek(float p_time) {
+	float max = get_length();
+	if (p_time < 0) {
+		p_time = 0;
+	}
+	base->set_position(uint64_t(p_time * base->mix_rate) << MIX_FRAC_BITS);
+}
 
+void MidiStreamPlayback::mix(AudioFrame *p_buffer, float p_rate, int p_frames) {
+	ERR_FAIL_COND(!active);
+	if (!active) {
+		return;
+	}
+	zeromem(pcm_buffer, PCM_BUFFER_SIZE);
+	int16_t * buf = (int16_t *)pcm_buffer;
+	base->tsf_render_float;
+
+	for (int i = 0; i < p_frames; i++) {
+		float sample = float(buf[i]) / 32767.0;
+		p_buffer[i] = AudioFrame(sample, sample);
+	}
+}

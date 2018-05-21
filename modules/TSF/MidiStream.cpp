@@ -28,6 +28,7 @@ void MidiStream::set_filename(char* filename) {
 
 void MidiStream::buffer_function(float* b){
 	 b = buffer;
+	 tsf_render_float(TSFpointer, b, sample_rate, 0);
 }
 
 void MidiStream::set_output(enum TSFOutputMode outputmode, int samplerate, float global_gain_db) {

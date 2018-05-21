@@ -42,11 +42,27 @@ void MidiStreamPlayback::mix(AudioFrame *p_buffer, float p_rate, int p_frames) {
 		return;
 	}
 	zeromem(pcm_buffer, PCM_BUFFER_SIZE);
-	int16_t * buf = (int16_t *)pcm_buffer;
-	base->tsf_render_float;
+	float * buf = (float *)pcm_buffer;
+	base->buffer_function(pcm_buffer);
 
 	for (int i = 0; i < p_frames; i++) {
 		float sample = float(buf[i]) / 32767.0;
 		p_buffer[i] = AudioFrame(sample, sample);
 	}
+}
+
+int MidiStreamPlayback::get_loop_count() const {
+	return 0;
+}
+
+float MidiStreamPlayback::get_playback_position() const {
+	return 0.0;
+}
+
+float MidiStreamPlayback::get_length() const {
+	return 0.0;
+}
+
+bool MidiStreamPlayback::is_playing() const {
+	return active;
 }

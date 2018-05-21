@@ -17,7 +17,7 @@ private :
 		MIX_FRAC_LEN = (1 << MIX_FRAC_BITS),
 		MIX_FRAC_MASK = MIX_FRAC_LEN - 1,
 	};
-	void * pcm_buffer;
+	void pcm_buffer;
 	Ref<MidiStream> base;
 	bool active;
 

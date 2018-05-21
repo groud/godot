@@ -13,6 +13,8 @@ private:
 	int sample_rate;
 
 public:
+	void reset();
+	void set_position(uint64_t pos);
 	tsf * TSFpointer;
 	char* sf_filename;
 	void set_filename(char* filename);

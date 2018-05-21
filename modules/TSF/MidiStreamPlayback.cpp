@@ -3,9 +3,10 @@
 #include "resource.h"
 #include "servers/audio/audio_stream.h"
 #include "MidiStreamPlayback.h"
-#define TSF_IMPLEMENTATION
+#include "MidiStream.h"
 #include "math/math_funcs.h"
 #include "print_string.h"
+#define TSF_IMPLEMENTATION
 
 
 MidiStreamPlayback::MidiStreamPlayback()
@@ -28,12 +29,17 @@ void MidiStreamPlayback::stop() {
 	base->reset();
 }
 
+void MidiStreamPlayback::start(float p_from_pos) {
+	seek(p_from_pos);
+	active = true;
+}
+
 void MidiStreamPlayback::seek(float p_time) {
 	float max = get_length();
 	if (p_time < 0) {
 		p_time = 0;
 	}
-	base->set_position(uint64_t(p_time * base->mix_rate) << MIX_FRAC_BITS);
+	base->set_position(uint64_t(p_time * base->sample_rate) << MIX_FRAC_BITS);
 }
 
 void MidiStreamPlayback::mix(AudioFrame *p_buffer, float p_rate, int p_frames) {
@@ -43,7 +49,7 @@ void MidiStreamPlayback::mix(AudioFrame *p_buffer, float p_rate, int p_frames) {
 	}
 	zeromem(pcm_buffer, PCM_BUFFER_SIZE);
 	float * buf = (float *)pcm_buffer;
-	base->buffer_function(pcm_buffer);
+	base->buffer_function((float*)pcm_buffer);
 
 	for (int i = 0; i < p_frames; i++) {
 		float sample = float(buf[i]) / 32767.0;

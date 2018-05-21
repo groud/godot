@@ -1,7 +1,7 @@
 #include "tsf.h"
-
 #include "servers/audio/audio_stream.h"
 #include "MidiStream.h"
+#include "MidiStreamPlayback.h"
 #define TSF_IMPLEMENTATION
 
 
@@ -18,6 +18,10 @@ Ref<AudioStreamPlayback> MidiStream::instance_playback() {
 	talking_tree.instance();
 	talking_tree->base = Ref<MidiStream>(this);
 	return talking_tree;
+}
+
+void MidiStream::set_position(uint64_t p) {
+	pos = p;
 }
 
 void MidiStream::set_filename(char* filename) {

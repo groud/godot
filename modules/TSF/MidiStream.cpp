@@ -58,3 +58,9 @@ void MidiStream::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_stream_name"), &MidiStream::get_stream_name);
 
 }
+
+
+String MidiStream::get_stream_name() const {
+	return "MidiStream";
+}
+

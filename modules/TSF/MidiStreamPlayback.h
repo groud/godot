@@ -3,6 +3,7 @@
 #include "resource.h"
 #include "servers/audio/audio_stream.h"
 
+
 class MidiStreamPlayback : public AudioStreamPlayback {
 	GDCLASS(MidiStreamPlayback, AudioStreamPlayback);
 	friend class MidiStream;

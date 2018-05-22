@@ -1,4 +1,4 @@
-#include "tsf.h"
+
 #include "reference.h"
 #include "resource.h"
 #include "servers/audio/audio_stream.h"
@@ -17,7 +17,7 @@ private :
 		MIX_FRAC_LEN = (1 << MIX_FRAC_BITS),
 		MIX_FRAC_MASK = MIX_FRAC_LEN - 1,
 	};
-	void pcm_buffer;
+	void* pcm_buffer;
 	Ref<MidiStream> base;
 	bool active;
 
@@ -32,5 +32,4 @@ public:
 	virtual float get_length() const; //if supported, otherwise return 0
 	MidiStreamPlayback();
 	~MidiStreamPlayback();
-
 };

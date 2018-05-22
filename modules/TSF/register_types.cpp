@@ -4,12 +4,12 @@
 #include "MidiStream.h"
 #include "MidiStreamPlayback.h"
 
-void register_summator_types() {
+void register_TSF_types() {
 
         ClassDB::register_class<MidiStream>();
         ClassDB::register_class<MidiStreamPlayback>();
 }
 
-void unregister_summator_types() {
+void unregister_TSF_types() {
    //nothing to do here
 }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        

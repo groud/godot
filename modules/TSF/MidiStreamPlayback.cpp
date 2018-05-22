@@ -1,12 +1,9 @@
-#include "tsf.h"
-#include "reference.h"
-#include "resource.h"
-#include "servers/audio/audio_stream.h"
+
 #include "MidiStreamPlayback.h"
 #include "MidiStream.h"
 #include "math/math_funcs.h"
 #include "print_string.h"
-#define TSF_IMPLEMENTATION
+
 
 
 MidiStreamPlayback::MidiStreamPlayback()

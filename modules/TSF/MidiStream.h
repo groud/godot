@@ -1,4 +1,4 @@
-#define TSF_IMPLEMENTATION
+
 #include "tsf.h"
 #include "reference.h"
 #include "resource.h"
@@ -27,4 +27,7 @@ public:
     float* buffer;
 	void buffer_function(float* b);
 	MidiStream();
+
+protected:
+	static void _bind_methods();
 };

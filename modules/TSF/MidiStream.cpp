@@ -1,8 +1,8 @@
-#include "tsf.h"
+#define TSF_IMPLEMENTATION
 #include "servers/audio/audio_stream.h"
 #include "MidiStream.h"
 #include "MidiStreamPlayback.h"
-#define TSF_IMPLEMENTATION
+
 
 
 MidiStream::MidiStream(){
@@ -48,4 +48,13 @@ void MidiStream::note_on(int n, int v)
 	tsf_note_on(TSFpointer, 0, n, v);
 }
 
+void MidiStream::reset() {
+	set_position(0);
+}
 
+
+void MidiStream::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("reset"), &MidiStream::reset);
+	ClassDB::bind_method(D_METHOD("get_stream_name"), &MidiStream::get_stream_name);
+
+}

@@ -1,5 +1,5 @@
 # SCsub
 Import('env')
 
-src_list = ["MidiStream.cpp", "MidiStreamPlayback.cpp"]
+src_list = ["MidiStream.cpp", "MidiStreamPlayback.cpp", "register_types.cpp"]
 env.add_source_files(env.modules_sources, src_list)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        

@@ -10,6 +10,7 @@ MidiStream::MidiStream(){
 	note = 50;
 	vel = 50;
 	sf_filename = "florestan-subset.sf2";
+	TSFpointer;
 }
 
 
@@ -26,8 +27,7 @@ void MidiStream::set_position(uint64_t p) {
 
 void MidiStream::set_filename(char* filename) {
 	filename = sf_filename;
-	tsf_load_filename(filename);
-
+	
 }
 
 void MidiStream::buffer_function(float* b){
@@ -56,7 +56,7 @@ void MidiStream::reset() {
 void MidiStream::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("reset"), &MidiStream::reset);
 	ClassDB::bind_method(D_METHOD("get_stream_name"), &MidiStream::get_stream_name);
-
+	ClassDB::bind_method(D_METHOD("note_on"), &MidiStream::note_on);
 }
 
 

@@ -31,6 +31,7 @@
 #include "os_x11.h"
 #include "drivers/gles2/rasterizer_gles2.h"
 #include "drivers/gles3/rasterizer_gles3.h"
+#include "drivers/vulkan/rasterizer_vulkan.h"
 #include "errno.h"
 #include "key_mapping_x11.h"
 #include "os/dir_access.h"
@@ -249,7 +250,7 @@ Error OS_X11::initialize(const VideoMode &p_desired, int p_video_driver, int p_a
 		XFree(imvalret);
 	}
 
-/*
+	/*
 	char* windowid = getenv("GODOT_WINDOWID");
 	if (windowid) {
 
@@ -265,35 +266,42 @@ Error OS_X11::initialize(const VideoMode &p_desired, int p_video_driver, int p_a
 	};
 	*/
 
-// maybe contextgl wants to be in charge of creating the window
-//print_line("def videomode "+itos(current_videomode.width)+","+itos(current_videomode.height));
+	// maybe contextgl wants to be in charge of creating the window
+	//print_line("def videomode "+itos(current_videomode.width)+","+itos(current_videomode.height));
+
+	if (p_video_driver == VIDEO_DRIVER_VULKAN) {
+		print_line("Vulkan, I choose you !");
+		RasterizerVulkan::make_current();
+
+	} else {
 #if defined(OPENGL_ENABLED)
+		ContextGL_X11::ContextType opengl_api_type = ContextGL_X11::GLES_3_0_COMPATIBLE;
 
-	ContextGL_X11::ContextType opengl_api_type = ContextGL_X11::GLES_3_0_COMPATIBLE;
+		if (p_video_driver == VIDEO_DRIVER_GLES2) {
+			opengl_api_type = ContextGL_X11::GLES_2_0_COMPATIBLE;
+		}
 
-	if (p_video_driver == VIDEO_DRIVER_GLES2) {
-		opengl_api_type = ContextGL_X11::GLES_2_0_COMPATIBLE;
-	}
+		context_gl = memnew(ContextGL_X11(x11_display, x11_window, current_videomode, opengl_api_type));
+		context_gl->initialize();
 
-	context_gl = memnew(ContextGL_X11(x11_display, x11_window, current_videomode, opengl_api_type));
-	context_gl->initialize();
+		switch (opengl_api_type) {
+			case ContextGL_X11::GLES_2_0_COMPATIBLE: {
+				RasterizerGLES2::register_config();
+				RasterizerGLES2::make_current();
+			} break;
+			case ContextGL_X11::GLES_3_0_COMPATIBLE: {
+				RasterizerGLES3::register_config();
+				RasterizerGLES3::make_current();
+			} break;
+		}
 
-	switch (opengl_api_type) {
-		case ContextGL_X11::GLES_2_0_COMPATIBLE: {
-			RasterizerGLES2::register_config();
-			RasterizerGLES2::make_current();
-		} break;
-		case ContextGL_X11::GLES_3_0_COMPATIBLE: {
-			RasterizerGLES3::register_config();
-			RasterizerGLES3::make_current();
-		} break;
-	}
+		video_driver_index = p_video_driver; // FIXME TODO - FIX IF DRIVER DETECTION HAPPENS AND GLES2 MUST BE USED
 
-	video_driver_index = p_video_driver; // FIXME TODO - FIX IF DRIVER DETECTION HAPPENS AND GLES2 MUST BE USED
-
-	context_gl->set_use_vsync(current_videomode.use_vsync);
+		context_gl->set_use_vsync(current_videomode.use_vsync);
 
 #endif
+	}
+
 	visual_server = memnew(VisualServerRaster);
 
 	if (get_render_thread_mode() != RENDER_THREAD_UNSAFE) {

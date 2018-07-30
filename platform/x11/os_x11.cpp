@@ -29,9 +29,12 @@
 /*************************************************************************/
 
 #include "os_x11.h"
+#include "context_gl_x11.h"
+#include "context_vulkan_x11.h"
 #include "drivers/gles2/rasterizer_gles2.h"
 #include "drivers/gles3/rasterizer_gles3.h"
 #include "drivers/vulkan/rasterizer_vulkan.h"
+
 #include "errno.h"
 #include "key_mapping_x11.h"
 #include "os/dir_access.h"
@@ -269,38 +272,39 @@ Error OS_X11::initialize(const VideoMode &p_desired, int p_video_driver, int p_a
 	// maybe contextgl wants to be in charge of creating the window
 	//print_line("def videomode "+itos(current_videomode.width)+","+itos(current_videomode.height));
 
-	if (p_video_driver == VIDEO_DRIVER_VULKAN) {
-		print_line("Vulkan, I choose you !");
-		RasterizerVulkan::make_current();
+	switch (p_video_driver) {
+#if defined(VULKAN_ENABLED)
+		case VIDEO_DRIVER_VULKAN:
+			RasterizerVulkan::make_current();
 
-	} else {
+			rendering_context = memnew(RenderingContextVulkan_X11(x11_display, x11_window, current_videomode));
+			rendering_context->initialize();
+			break;
+#endif
 #if defined(OPENGL_ENABLED)
-		ContextGL_X11::ContextType opengl_api_type = ContextGL_X11::GLES_3_0_COMPATIBLE;
+		case VIDEO_DRIVER_GLES2:
+			rendering_context = memnew(ContextGL_X11(x11_display, x11_window, current_videomode, ContextGL_X11::GLES_2_0_COMPATIBLE));
+			rendering_context->initialize();
 
-		if (p_video_driver == VIDEO_DRIVER_GLES2) {
-			opengl_api_type = ContextGL_X11::GLES_2_0_COMPATIBLE;
-		}
+			RasterizerGLES2::register_config();
+			RasterizerGLES2::make_current();
+			break;
 
-		context_gl = memnew(ContextGL_X11(x11_display, x11_window, current_videomode, opengl_api_type));
-		context_gl->initialize();
+		case VIDEO_DRIVER_GLES3:
+		default:
+			rendering_context = memnew(ContextGL_X11(x11_display, x11_window, current_videomode, ContextGL_X11::GLES_3_0_COMPATIBLE));
+			rendering_context->initialize();
 
-		switch (opengl_api_type) {
-			case ContextGL_X11::GLES_2_0_COMPATIBLE: {
-				RasterizerGLES2::register_config();
-				RasterizerGLES2::make_current();
-			} break;
-			case ContextGL_X11::GLES_3_0_COMPATIBLE: {
-				RasterizerGLES3::register_config();
-				RasterizerGLES3::make_current();
-			} break;
-		}
-
-		video_driver_index = p_video_driver; // FIXME TODO - FIX IF DRIVER DETECTION HAPPENS AND GLES2 MUST BE USED
-
-		context_gl->set_use_vsync(current_videomode.use_vsync);
-
+			RasterizerGLES3::register_config();
+			RasterizerGLES3::make_current();
+			break;
 #endif
 	}
+
+#if defined(VULKAN_ENABLED) || defined(OPENGL_ENABLED)
+	video_driver_index = p_video_driver; // FIXME TODO - FIX IF DRIVER DETECTION HAPPENS AND GLES2 MUST BE USED
+	rendering_context->set_use_vsync(current_videomode.use_vsync);
+#endif
 
 	visual_server = memnew(VisualServerRaster);
 
@@ -644,7 +648,7 @@ void OS_X11::finalize() {
 	XDestroyWindow(x11_display, x11_window);
 
 #if defined(OPENGL_ENABLED)
-	memdelete(context_gl);
+	memdelete(rendering_context);
 #endif
 	for (int i = 0; i < CURSOR_MAX; i++) {
 		if (cursors[i] != None)
@@ -2551,21 +2555,21 @@ void OS_X11::set_custom_mouse_cursor(const RES &p_cursor, CursorShape p_shape, c
 void OS_X11::release_rendering_thread() {
 
 #if defined(OPENGL_ENABLED)
-	context_gl->release_current();
+	rendering_context->release_current();
 #endif
 }
 
 void OS_X11::make_rendering_thread() {
 
 #if defined(OPENGL_ENABLED)
-	context_gl->make_current();
+	rendering_context->make_current();
 #endif
 }
 
 void OS_X11::swap_buffers() {
 
 #if defined(OPENGL_ENABLED)
-	context_gl->swap_buffers();
+	rendering_context->swap_buffers();
 #endif
 }
 
@@ -2661,15 +2665,15 @@ String OS_X11::get_joy_guid(int p_device) const {
 
 void OS_X11::_set_use_vsync(bool p_enable) {
 #if defined(OPENGL_ENABLED)
-	if (context_gl)
-		context_gl->set_use_vsync(p_enable);
+	if (rendering_context)
+		rendering_context->set_use_vsync(p_enable);
 #endif
 }
 /*
 bool OS_X11::is_vsync_enabled() const {
 
-	if (context_gl)
-		return context_gl->is_using_vsync();
+	if (rendering_context)
+		return rendering_context->is_using_vsync();
 
 	return true;
 }

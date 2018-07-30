@@ -97,7 +97,7 @@ class OS_X11 : public OS_Unix {
 	int xdnd_version;
 
 #if defined(OPENGL_ENABLED)
-	ContextGL_X11 *context_gl;
+	RenderingContext *rendering_context;
 #endif
 	//Rasterizer *rasterizer;
 	VisualServer *visual_server;

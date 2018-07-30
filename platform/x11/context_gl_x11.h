@@ -38,14 +38,14 @@
 
 #if defined(OPENGL_ENABLED)
 
-#include "drivers/gl_context/context_gl.h"
 #include "os/os.h"
+#include "servers/visual/rendering_context.h"
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
 
 struct ContextGL_X11_Private;
 
-class ContextGL_X11 : public ContextGL {
+class ContextGL_X11 : public RenderingContext {
 
 public:
 	enum ContextType {

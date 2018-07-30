@@ -29,7 +29,6 @@
 /*************************************************************************/
 #include "rasterizer_gles2.h"
 
-#include "gl_context/context_gl.h"
 #include "os/os.h"
 #include "project_settings.h"
 #include <string.h>

@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  context_gl.h                                                         */
+/*  rendering_context.cpp                                                */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,39 +28,28 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef CONTEXT_GL_H
-#define CONTEXT_GL_H
+#include "rendering_context.h"
 
 #if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 
-#include "typedefs.h"
+RenderingContext *RenderingContext::singleton = NULL;
 
-/**
-	@author Juan Linietsky <reduzio@gmail.com>
-*/
+RenderingContext *RenderingContext::get_singleton() {
 
-class ContextGL {
+	return singleton;
+}
 
-	static ContextGL *singleton;
+RenderingContext::RenderingContext() {
 
-public:
-	static ContextGL *get_singleton();
+	ERR_FAIL_COND(singleton);
 
-	virtual void release_current() = 0;
+	singleton = this;
+}
 
-	virtual void make_current() = 0;
+RenderingContext::~RenderingContext() {
 
-	virtual void swap_buffers() = 0;
-
-	virtual Error initialize() = 0;
-
-	virtual void set_use_vsync(bool p_use) = 0;
-	virtual bool is_using_vsync() const = 0;
-
-	ContextGL();
-	~ContextGL();
-};
-
-#endif
+	if (singleton == this)
+		singleton = NULL;
+}
 
 #endif

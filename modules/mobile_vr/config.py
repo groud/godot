@@ -1,4 +1,6 @@
 def can_build(env, platform):
+    if env["vulkan"]:
+        return False
     return True
 
 def configure(env):

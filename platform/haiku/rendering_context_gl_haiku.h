@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  context_gl_win.h                                                     */
+/*  rendering_context_gl_haiku.h                                         */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,48 +28,36 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
+#ifndef CONTEXT_GL_HAIKU_H
+#define CONTEXT_GL_HAIKU_H
 
-// Author: Juan Linietsky <reduzio@gmail.com>, (C) 2008
+#if defined(OPENGL_ENABLED)
 
-#ifndef CONTEXT_GL_WIN_H
-#define CONTEXT_GL_WIN_H
+#include "servers/visual/rendering_context.h"
 
-#include "drivers/gl_context/context_gl.h"
-#include "error_list.h"
-#include "os/os.h"
+#include "haiku_direct_window.h"
+#include "haiku_gl_view.h"
 
-#include <windows.h>
+class ContextGL_Haiku : public ContextGL {
+private:
+	HaikuGLView *view;
+	HaikuDirectWindow *window;
 
-typedef bool(APIENTRY *PFNWGLSWAPINTERVALEXTPROC)(int interval);
-
-class ContextGL_Win : public ContextGL {
-
-	HDC hDC;
-	HGLRC hRC;
-	unsigned int pixel_format;
-	HWND hWnd;
-	bool opengl_3_context;
 	bool use_vsync;
 
-	PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
-
 public:
-	virtual void release_current();
-
-	virtual void make_current();
-
-	virtual int get_window_width();
-	virtual int get_window_height();
-	virtual void swap_buffers();
+	ContextGL_Haiku(HaikuDirectWindow *p_window);
+	~ContextGL_Haiku();
 
 	virtual Error initialize();
+	virtual void release_current();
+	virtual void make_current();
+	virtual void swap_buffers();
+	virtual int get_window_width();
+	virtual int get_window_height();
 
 	virtual void set_use_vsync(bool p_use);
 	virtual bool is_using_vsync() const;
-
-	ContextGL_Win(HWND hwnd, bool p_opengl_3_context);
-	~ContextGL_Win();
 };
 
 #endif

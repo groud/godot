@@ -1172,13 +1172,13 @@ Error OS_Windows::initialize(const VideoMode &p_desired, int p_video_driver, int
 
 #if defined(OPENGL_ENABLED)
 	if (p_video_driver == VIDEO_DRIVER_GLES2) {
-		gl_context = memnew(ContextGL_Win(hWnd, false));
+		gl_context = memnew(RenderingContextGL_Win(hWnd, false));
 		gl_context->initialize();
 
 		RasterizerGLES2::register_config();
 		RasterizerGLES2::make_current();
 	} else {
-		gl_context = memnew(ContextGL_Win(hWnd, true));
+		gl_context = memnew(RenderingContextGL_Win(hWnd, true));
 		gl_context->initialize();
 
 		RasterizerGLES3::register_config();

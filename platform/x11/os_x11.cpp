@@ -29,11 +29,11 @@
 /*************************************************************************/
 
 #include "os_x11.h"
-#include "context_gl_x11.h"
-#include "context_vulkan_x11.h"
 #include "drivers/gles2/rasterizer_gles2.h"
 #include "drivers/gles3/rasterizer_gles3.h"
 #include "drivers/vulkan/rasterizer_vulkan.h"
+#include "rendering_context_gl_x11.h"
+#include "rendering_context_vulkan_x11.h"
 
 #include "errno.h"
 #include "key_mapping_x11.h"
@@ -283,7 +283,7 @@ Error OS_X11::initialize(const VideoMode &p_desired, int p_video_driver, int p_a
 #endif
 #if defined(OPENGL_ENABLED)
 		case VIDEO_DRIVER_GLES2:
-			rendering_context = memnew(ContextGL_X11(x11_display, x11_window, current_videomode, ContextGL_X11::GLES_2_0_COMPATIBLE));
+			rendering_context = memnew(RenderingContextGL_X11(x11_display, x11_window, current_videomode, RenderingContextGL_X11::GLES_2_0_COMPATIBLE));
 			rendering_context->initialize();
 
 			RasterizerGLES2::register_config();
@@ -292,7 +292,7 @@ Error OS_X11::initialize(const VideoMode &p_desired, int p_video_driver, int p_a
 
 		case VIDEO_DRIVER_GLES3:
 		default:
-			rendering_context = memnew(ContextGL_X11(x11_display, x11_window, current_videomode, ContextGL_X11::GLES_3_0_COMPATIBLE));
+			rendering_context = memnew(RenderingContextGL_X11(x11_display, x11_window, current_videomode, RenderingContextGL_X11::GLES_3_0_COMPATIBLE));
 			rendering_context->initialize();
 
 			RasterizerGLES3::register_config();

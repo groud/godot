@@ -32,12 +32,12 @@
 #define OS_HAIKU_H
 
 #include "audio_driver_media_kit.h"
-#include "context_gl_haiku.h"
 #include "drivers/unix/os_unix.h"
 #include "haiku_application.h"
 #include "haiku_direct_window.h"
 #include "main/input_default.h"
 #include "power_haiku.h"
+#include "rendering_context_gl_haiku.h"
 #include "servers/audio_server.h"
 #include "servers/visual/rasterizer.h"
 #include "servers/visual_server.h"
@@ -59,7 +59,7 @@ private:
 #endif
 
 #if defined(OPENGL_ENABLED)
-	ContextGL_Haiku *context_gl;
+	RenderingContextGL_Haiku *context_gl;
 #endif
 
 	virtual void delete_main_loop();

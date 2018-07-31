@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  context_vulkan.h                                                     */
+/*  rendering_context_gl_haiku.cpp                                       */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,40 +28,56 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef RENDERING_CONTEXT_VULKAN_X11_H
-#define RENDERING_CONTEXT_VULKAN_X11_H
+#include "rendering_context_gl_haiku.h"
 
-//#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
+#if defined(OPENGL_ENABLED)
 
-#include "os/os.h"
-#include "servers/visual/rendering_context.h"
-#include <X11/Xlib.h>
-#include <X11/extensions/Xrender.h>
+ContextGL_Haiku::ContextGL_Haiku(HaikuDirectWindow *p_window) {
+	window = p_window;
 
-#include "typedefs.h"
+	uint32 type = BGL_RGB | BGL_DOUBLE | BGL_DEPTH;
+	view = new HaikuGLView(window->Bounds(), type);
 
-class RenderingContextVulkan_X11 : public RenderingContext {
-private:
-	OS::VideoMode default_video_mode;
-	::Display *x11_display;
-	::Window &x11_window;
+	use_vsync = false;
+}
 
-public:
-	virtual void release_current();
-	virtual void make_current();
-	virtual void swap_buffers();
-	virtual int get_window_width();
-	virtual int get_window_height();
+ContextGL_Haiku::~ContextGL_Haiku() {
+	delete view;
+}
 
-	virtual Error initialize();
+Error ContextGL_Haiku::initialize() {
+	window->AddChild(view);
+	window->SetHaikuGLView(view);
 
-	virtual void set_use_vsync(bool p_use);
-	virtual bool is_using_vsync() const;
+	return OK;
+}
 
-	RenderingContextVulkan_X11(::Display *p_x11_display, ::Window &p_x11_window, const OS::VideoMode &p_default_video_mode);
-	~RenderingContextVulkan_X11();
-};
+void ContextGL_Haiku::release_current() {
+	view->UnlockGL();
+}
 
-//#endif
+void ContextGL_Haiku::make_current() {
+	view->LockGL();
+}
+
+void ContextGL_Haiku::swap_buffers() {
+	view->SwapBuffers(use_vsync);
+}
+
+int ContextGL_Haiku::get_window_width() {
+	return window->Bounds().IntegerWidth();
+}
+
+int ContextGL_Haiku::get_window_height() {
+	return window->Bounds().IntegerHeight();
+}
+
+void ContextGL_Haiku::set_use_vsync(bool p_use) {
+	use_vsync = p_use;
+}
+
+bool ContextGL_Haiku::is_using_vsync() const {
+	return use_vsync;
+}
 
 #endif

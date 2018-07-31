@@ -1,6 +1,5 @@
-
 /*************************************************************************/
-/*  context_vulkan.cpp                                                   */
+/*  rendering_context_vulkan.h                                           */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -29,28 +28,40 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#include "context_vulkan.h"
+#ifndef RENDERING_CONTEXT_VULKAN_X11_H
+#define RENDERING_CONTEXT_VULKAN_X11_H
 
 //#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 
-RenderingContextVulkan *RenderingContextVulkan::singleton = NULL;
+#include "os/os.h"
+#include "servers/visual/rendering_context.h"
+#include <X11/Xlib.h>
+#include <X11/extensions/Xrender.h>
 
-RenderingContextVulkan *RenderingContextVulkan::get_singleton() {
+#include "typedefs.h"
 
-	return singleton;
-}
+class RenderingContextVulkan_X11 : public RenderingContext {
+private:
+	OS::VideoMode default_video_mode;
+	::Display *x11_display;
+	::Window &x11_window;
 
-RenderingContextVulkan::RenderingContextVulkan() {
+public:
+	virtual void release_current();
+	virtual void make_current();
+	virtual void swap_buffers();
+	virtual int get_window_width();
+	virtual int get_window_height();
 
-	ERR_FAIL_COND(singleton);
+	virtual Error initialize();
 
-	singleton = this;
-}
+	virtual void set_use_vsync(bool p_use);
+	virtual bool is_using_vsync() const;
 
-RenderingContextVulkan::~RenderingContextVulkan() {
-
-	if (singleton == this)
-		singleton = NULL;
-}
+	RenderingContextVulkan_X11(::Display *p_x11_display, ::Window &p_x11_window, const OS::VideoMode &p_default_video_mode);
+	~RenderingContextVulkan_X11();
+};
 
 //#endif
+
+#endif

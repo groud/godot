@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  context_gl_win.cpp                                                   */
+/*  rendering_context_gl_win.cpp                                         */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -32,7 +32,7 @@
 
 // Author: Juan Linietsky <reduzio@gmail.com>, (C) 2008
 
-#include "context_gl_win.h"
+#include "rendering_context_gl_win.h"
 
 #define WGL_CONTEXT_MAJOR_VERSION_ARB 0x2091
 #define WGL_CONTEXT_MINOR_VERSION_ARB 0x2092
@@ -43,27 +43,27 @@
 
 typedef HGLRC(APIENTRY *PFNWGLCREATECONTEXTATTRIBSARBPROC)(HDC, HGLRC, const int *);
 
-void ContextGL_Win::release_current() {
+void RenderingContextGL_Win::release_current() {
 
 	wglMakeCurrent(hDC, NULL);
 }
 
-void ContextGL_Win::make_current() {
+void RenderingContextGL_Win::make_current() {
 
 	wglMakeCurrent(hDC, hRC);
 }
 
-int ContextGL_Win::get_window_width() {
+int RenderingContextGL_Win::get_window_width() {
 
 	return OS::get_singleton()->get_video_mode().width;
 }
 
-int ContextGL_Win::get_window_height() {
+int RenderingContextGL_Win::get_window_height() {
 
 	return OS::get_singleton()->get_video_mode().height;
 }
 
-void ContextGL_Win::swap_buffers() {
+void RenderingContextGL_Win::swap_buffers() {
 
 	SwapBuffers(hDC);
 }
@@ -82,7 +82,7 @@ static GLWrapperFuncPtr wrapper_get_proc_address(const char* p_function) {
 }
 */
 
-void ContextGL_Win::set_use_vsync(bool p_use) {
+void RenderingContextGL_Win::set_use_vsync(bool p_use) {
 
 	if (wglSwapIntervalEXT) {
 		wglSwapIntervalEXT(p_use ? 1 : 0);
@@ -90,14 +90,14 @@ void ContextGL_Win::set_use_vsync(bool p_use) {
 	use_vsync = p_use;
 }
 
-bool ContextGL_Win::is_using_vsync() const {
+bool RenderingContextGL_Win::is_using_vsync() const {
 
 	return use_vsync;
 }
 
 #define _WGL_CONTEXT_DEBUG_BIT_ARB 0x0001
 
-Error ContextGL_Win::initialize() {
+Error RenderingContextGL_Win::initialize() {
 
 	static PIXELFORMATDESCRIPTOR pfd = {
 		sizeof(PIXELFORMATDESCRIPTOR), // Size Of This Pixel Format Descriptor
@@ -193,14 +193,14 @@ Error ContextGL_Win::initialize() {
 	return OK;
 }
 
-ContextGL_Win::ContextGL_Win(HWND hwnd, bool p_opengl_3_context) {
+RenderingContextGL_Win::RenderingContextGL_Win(HWND hwnd, bool p_opengl_3_context) {
 
 	opengl_3_context = p_opengl_3_context;
 	hWnd = hwnd;
 	use_vsync = false;
 }
 
-ContextGL_Win::~ContextGL_Win() {
+RenderingContextGL_Win::~RenderingContextGL_Win() {
 }
 
 #endif

@@ -7,7 +7,7 @@ from platform_methods import run_in_subprocess
 import platform_windows_builders
 
 common_win = [
-    "context_gl_win.cpp",
+    "rendering_context_gl_win.cpp",
     "crash_handler_win.cpp",
     "os_windows.cpp",
     "ctxgl_procaddr.cpp",

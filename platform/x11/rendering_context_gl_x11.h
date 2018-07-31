@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  context_vulkan.h                                                     */
+/*  rendering_context_gl_x11.h                                           */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,35 +28,61 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef RENDERING_CONTEXT_VULKAN_H
-#define RENDERING_CONTEXT_VULKAN_H
+#ifndef RENDERING_CONTEXT_GL_X11_H
+#define RENDERING_CONTEXT_GL_X11_H
 
-//#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
+/**
+	@author Juan Linietsky <reduzio@gmail.com>
+*/
+#ifdef X11_ENABLED
 
-#include "typedefs.h"
+#if defined(OPENGL_ENABLED)
 
-class RenderingContextVulkan {
+#include "os/os.h"
+#include "servers/visual/rendering_context.h"
+#include <X11/Xlib.h>
+#include <X11/extensions/Xrender.h>
 
-	static RenderingContextVulkan *singleton;
+struct RenderingContextGL_X11_Private;
+
+class RenderingContextGL_X11 : public RenderingContext {
 
 public:
-	static RenderingContextVulkan *get_singleton();
+	enum ContextType {
+		OLDSTYLE,
+		GLES_2_0_COMPATIBLE,
+		GLES_3_0_COMPATIBLE
+	};
 
-	virtual void release_current() = 0;
+private:
+	RenderingContextGL_X11_Private *p;
+	OS::VideoMode default_video_mode;
+	//::Colormap x11_colormap;
+	::Display *x11_display;
+	::Window &x11_window;
+	bool double_buffer;
+	bool direct_render;
+	int glx_minor, glx_major;
+	bool use_vsync;
+	ContextType context_type;
 
-	virtual void make_current() = 0;
+public:
+	virtual void release_current();
+	virtual void make_current();
+	virtual void swap_buffers();
+	virtual int get_window_width();
+	virtual int get_window_height();
 
-	virtual void swap_buffers() = 0;
+	virtual Error initialize();
 
-	virtual Error initialize() = 0;
+	virtual void set_use_vsync(bool p_use);
+	virtual bool is_using_vsync() const;
 
-	virtual void set_use_vsync(bool p_use) = 0;
-	virtual bool is_using_vsync() const = 0;
-
-	RenderingContextVulkan();
-	~RenderingContextVulkan();
+	RenderingContextGL_X11(::Display *p_x11_display, ::Window &p_x11_window, const OS::VideoMode &p_default_video_mode, ContextType p_context_type);
+	~RenderingContextGL_X11();
 };
 
-//#endif
+#endif
 
+#endif
 #endif

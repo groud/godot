@@ -1,6 +1,5 @@
-
 /*************************************************************************/
-/*  context_vulkan.cpp                                                   */
+/*  rendering_context_vulkan.cpp                                         */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -29,7 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#include "context_vulkan_x11.h"
+#include "rendering_context_vulkan_x11.h"
 
 //#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 

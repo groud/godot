@@ -4,7 +4,7 @@ Import('env')
 
 common_haiku = [
     'os_haiku.cpp',
-    'context_gl_haiku.cpp',
+    'rendering_context_gl_haiku.cpp',
     'haiku_application.cpp',
     'haiku_direct_window.cpp',
     'haiku_gl_view.cpp',

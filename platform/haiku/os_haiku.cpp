@@ -107,7 +107,7 @@ Error OS_Haiku::initialize(const VideoMode &p_desired, int p_video_driver, int p
 	}
 
 #if defined(OPENGL_ENABLED)
-	context_gl = memnew(ContextGL_Haiku(window));
+	context_gl = memnew(RenderingContextGL_Haiku(window));
 	context_gl->initialize();
 	context_gl->make_current();
 	context_gl->set_use_vsync(current_video_mode.use_vsync);

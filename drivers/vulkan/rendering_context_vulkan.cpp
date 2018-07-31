@@ -1,5 +1,6 @@
+
 /*************************************************************************/
-/*  context_gl_haiku.cpp                                                 */
+/*  rendering_context_vulkan.cpp                                         */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,56 +29,28 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#include "context_gl_haiku.h"
+#include "rendering_context_vulkan.h"
 
-#if defined(OPENGL_ENABLED)
+//#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 
-ContextGL_Haiku::ContextGL_Haiku(HaikuDirectWindow *p_window) {
-	window = p_window;
+RenderingContextVulkan *RenderingContextVulkan::singleton = NULL;
 
-	uint32 type = BGL_RGB | BGL_DOUBLE | BGL_DEPTH;
-	view = new HaikuGLView(window->Bounds(), type);
+RenderingContextVulkan *RenderingContextVulkan::get_singleton() {
 
-	use_vsync = false;
+	return singleton;
 }
 
-ContextGL_Haiku::~ContextGL_Haiku() {
-	delete view;
+RenderingContextVulkan::RenderingContextVulkan() {
+
+	ERR_FAIL_COND(singleton);
+
+	singleton = this;
 }
 
-Error ContextGL_Haiku::initialize() {
-	window->AddChild(view);
-	window->SetHaikuGLView(view);
+RenderingContextVulkan::~RenderingContextVulkan() {
 
-	return OK;
+	if (singleton == this)
+		singleton = NULL;
 }
 
-void ContextGL_Haiku::release_current() {
-	view->UnlockGL();
-}
-
-void ContextGL_Haiku::make_current() {
-	view->LockGL();
-}
-
-void ContextGL_Haiku::swap_buffers() {
-	view->SwapBuffers(use_vsync);
-}
-
-int ContextGL_Haiku::get_window_width() {
-	return window->Bounds().IntegerWidth();
-}
-
-int ContextGL_Haiku::get_window_height() {
-	return window->Bounds().IntegerHeight();
-}
-
-void ContextGL_Haiku::set_use_vsync(bool p_use) {
-	use_vsync = p_use;
-}
-
-bool ContextGL_Haiku::is_using_vsync() const {
-	return use_vsync;
-}
-
-#endif
+//#endif

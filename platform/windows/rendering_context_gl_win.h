@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  context_gl_haiku.h                                                   */
+/*  rendering_context_gl_win.h                                           */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,36 +28,48 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef CONTEXT_GL_HAIKU_H
-#define CONTEXT_GL_HAIKU_H
+#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 
-#if defined(OPENGL_ENABLED)
+// Author: Juan Linietsky <reduzio@gmail.com>, (C) 2008
 
-#include "drivers/gl_context/context_gl.h"
+#ifndef RENDERING_CONTEXT_GL_WIN_H
+#define RENDERING_CONTEXT_GL_WIN_H
 
-#include "haiku_direct_window.h"
-#include "haiku_gl_view.h"
+#include "error_list.h"
+#include "os/os.h"
+#include "servers/visual/rendering_context.h"
 
-class ContextGL_Haiku : public ContextGL {
-private:
-	HaikuGLView *view;
-	HaikuDirectWindow *window;
+#include <windows.h>
 
+typedef bool(APIENTRY *PFNWGLSWAPINTERVALEXTPROC)(int interval);
+
+class RenderingContextGL_Win : public RenderingContext {
+
+	HDC hDC;
+	HGLRC hRC;
+	unsigned int pixel_format;
+	HWND hWnd;
+	bool opengl_3_context;
 	bool use_vsync;
 
-public:
-	ContextGL_Haiku(HaikuDirectWindow *p_window);
-	~ContextGL_Haiku();
+	PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 
-	virtual Error initialize();
+public:
 	virtual void release_current();
+
 	virtual void make_current();
-	virtual void swap_buffers();
+
 	virtual int get_window_width();
 	virtual int get_window_height();
+	virtual void swap_buffers();
+
+	virtual Error initialize();
 
 	virtual void set_use_vsync(bool p_use);
 	virtual bool is_using_vsync() const;
+
+	RenderingContextGL_Win(HWND hwnd, bool p_opengl_3_context);
+	~RenderingContextGL_Win();
 };
 
 #endif

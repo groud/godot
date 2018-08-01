@@ -31,6 +31,7 @@
 
 #include "os/os.h"
 #include "project_settings.h"
+#include "servers/visual/rendering_context.h"
 #include <string.h>
 
 #define _EXT_DEBUG_OUTPUT_SYNCHRONOUS_ARB 0x8242
@@ -396,20 +397,15 @@ void RasterizerGLES2::end_frame(bool p_swap_buffers) {
 void RasterizerGLES2::finalize() {
 }
 
-Rasterizer *RasterizerGLES2::_create_current() {
-
-	return memnew(RasterizerGLES2);
-}
-
-void RasterizerGLES2::make_current() {
-	_create_func = _create_current;
+void RasterizerGLES2::make_current(RenderingContext *context) {
+	_create_func = memnew(MakeCurrentFunctGLES2(context));
 }
 
 void RasterizerGLES2::register_config() {
 }
 
-RasterizerGLES2::RasterizerGLES2() {
-
+RasterizerGLES2::RasterizerGLES2(RenderingContext *p_context) {
+	context = p_context;
 	storage = memnew(RasterizerStorageGLES2);
 	canvas = memnew(RasterizerCanvasGLES2);
 	scene = memnew(RasterizerSceneGLES2);
@@ -426,4 +422,15 @@ RasterizerGLES2::~RasterizerGLES2() {
 
 	memdelete(storage);
 	memdelete(canvas);
+}
+
+Rasterizer *MakeCurrentFunctGLES2::make_current() {
+	return memnew(RasterizerGLES2(context));
+}
+
+MakeCurrentFunctGLES2::MakeCurrentFunctGLES2(RenderingContext *p_context) {
+	context = p_context;
+}
+
+MakeCurrentFunctGLES2::~MakeCurrentFunctGLES2() {
 }

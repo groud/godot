@@ -34,13 +34,13 @@
 //#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 
 #include "os/os.h"
-#include "servers/visual/rendering_context.h"
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
 
 #include "typedefs.h"
+#include "drivers/vulkan/rendering_context_vulkan.h"
 
-class RenderingContextVulkan_X11 : public RenderingContext {
+class RenderingContextVulkan_X11 : public RenderingContextVulkan {
 private:
 	OS::VideoMode default_video_mode;
 	::Display *x11_display;

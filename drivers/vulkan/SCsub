@@ -2,4 +2,10 @@
 
 Import('env')
 
+if (env["platform"] in ["haiku", "osx", "windows", "x11"]):
+    # Thirdparty source files
+    thirdparty_dir = "#thirdparty/glad2/"
+
+    env.Append(CPPPATH=[thirdparty_dir + "/include"])
+
 env.add_source_files(env.drivers_sources, "*.cpp")

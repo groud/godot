@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  rendering_context.h                                                  */
+/*  rendering_context_vulkan_win.h                                       */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,37 +28,45 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef RENDERING_CONTEXT_H
-#define RENDERING_CONTEXT_H
+#ifndef RENDERING_CONTEXT_VULKAN_WIN_H
+#define RENDERING_CONTEXT_VULKAN_WIN_H
 
 //#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 
+#include "glad/vulkan.h"
+#include <windows.h>
+
+#include "drivers/vulkan/rendering_context_vulkan.h"
+#include "os/os.h"
+#include "servers/visual/rendering_context.h"
 #include "typedefs.h"
+#include "drivers/vulkan/rasterizer_vulkan.h"
 
-/**
-	@author Juan Linietsky <reduzio@gmail.com>
-*/
+class RenderingContextVulkan_Win : public RenderingContextVulkan {
+private:
+	HWND hWnd;
 
-class RenderingContext {
+	const int WIDTH = 800;
+	const int HEIGHT = 600;
 
-	static RenderingContext *singleton;
+	unsigned int pixel_format;
+	bool use_vsync;
+	int glad_vk_version = 0;
 
 public:
-	static RenderingContext *get_singleton();
+	virtual void release_current();
+	virtual void make_current();
+	virtual void swap_buffers();
+	virtual int get_window_width();
+	virtual int get_window_height();
 
-	virtual void release_current() = 0;
+	virtual Error initialize();
 
-	virtual void make_current() = 0;
+	virtual void set_use_vsync(bool p_use);
+	virtual bool is_using_vsync() const;
 
-	virtual void swap_buffers() = 0;
-
-	virtual Error initialize() = 0;
-
-	virtual void set_use_vsync(bool p_use) = 0;
-	virtual bool is_using_vsync() const = 0;
-
-	RenderingContext();
-	~RenderingContext();
+	RenderingContextVulkan_Win(HWND hwnd);
+	~RenderingContextVulkan_Win();
 };
 
 //#endif

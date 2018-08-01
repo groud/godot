@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  rendering_context.h                                                  */
+/*  rendering_context_vulkan_win.cpp                                     */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,39 +28,59 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef RENDERING_CONTEXT_H
-#define RENDERING_CONTEXT_H
+#include "platform/windows/rendering_context_vulkan_win.h"
+
+#include <windows.h>
+
+#define GLAD_VULKAN_IMPLEMENTATION
+#include "glad/vulkan.h"
 
 //#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 
-#include "typedefs.h"
+void RenderingContextVulkan_Win::release_current() {
+}
 
-/**
-	@author Juan Linietsky <reduzio@gmail.com>
-*/
+void RenderingContextVulkan_Win::make_current() {
+}
 
-class RenderingContext {
+void RenderingContextVulkan_Win::swap_buffers() {
+}
 
-	static RenderingContext *singleton;
+int RenderingContextVulkan_Win::get_window_width() {
+	return 0;
+}
 
-public:
-	static RenderingContext *get_singleton();
+int RenderingContextVulkan_Win::get_window_height() {
+	return 0;
+}
 
-	virtual void release_current() = 0;
+Error RenderingContextVulkan_Win::initialize() {
 
-	virtual void make_current() = 0;
+	return OK;
+}
 
-	virtual void swap_buffers() = 0;
+void RenderingContextVulkan_Win::set_use_vsync(bool p_use) {
+}
 
-	virtual Error initialize() = 0;
+bool RenderingContextVulkan_Win::is_using_vsync() const {
+	return false;
+}
 
-	virtual void set_use_vsync(bool p_use) = 0;
-	virtual bool is_using_vsync() const = 0;
+RenderingContextVulkan_Win::RenderingContextVulkan_Win(HWND hwnd) {
 
-	RenderingContext();
-	~RenderingContext();
-};
+	hWnd = hwnd;
+	use_vsync = false;
+	device_extensions.insert(String(VK_KHR_SWAPCHAIN_EXTENSION_NAME).utf8());
+	validation_layers.insert(String("VK_LAYER_LUNARG_standard_validation").utf8());
+
+	glad_vk_version = gladLoaderLoadVulkan(NULL, NULL, NULL);
+	if (!glad_vk_version) {
+		ERR_FAIL("Unable to load Vulkan symbols!\n",
+				"gladLoad Failure");
+	}
+}
+
+RenderingContextVulkan_Win::~RenderingContextVulkan_Win() {
+}
 
 //#endif
-
-#endif

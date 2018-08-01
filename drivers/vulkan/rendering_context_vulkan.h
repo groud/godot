@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  rendering_context_vulkan.h                                           */
+/*  rendering_context.h                                                  */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -33,11 +33,60 @@
 
 //#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 
+#include <windows.h>
+
+#include "glad/vulkan.h"
+
+#include "core/set.h"
+#include "core/ustring.h"
+#include "core/vector.h"
+#include "servers/visual/rendering_context.h"
 #include "typedefs.h"
 
-class RenderingContextVulkan {
-
+class RenderingContextVulkan : public RenderingContext {
+private:
 	static RenderingContextVulkan *singleton;
+
+	const int WIDTH = 800;
+	const int HEIGHT = 600;
+
+	HDC hDC;
+	HGLRC hRC;
+	unsigned int pixel_format;
+	HWND hWnd;
+	bool use_vsync;
+	int glad_vk_version = 0;
+
+	VkInstance instance;
+	VkDebugReportCallbackEXT callback;
+	VkDevice device;
+	VkPhysicalDevice physical_device = VK_NULL_HANDLE;
+	VkQueue graphics_queue;
+	VkQueue present_queue;
+	VkSurfaceKHR surface;
+
+	VkSwapchainKHR swap_chain;
+	Vector<VkImage> swap_chain_images;
+	VkFormat swap_chain_image_format;
+	VkExtent2D swap_chain_extent;
+	Vector<VkImageView> swap_chain_image_views;
+	Vector<VkFramebuffer> swap_chain_framebuffers;
+
+	VkRenderPass render_pass;
+	VkPipelineLayout pipeline_layout;
+	VkPipeline graphics_pipeline;
+
+	VkCommandPool command_pool;
+	Vector<VkCommandBuffer> command_buffers;
+
+	VkSemaphore image_available_semaphore;
+	VkSemaphore render_finished_semaphore;
+
+protected:
+	Set<CharString> device_extensions;
+	Set<CharString> extensions;
+	Set<CharString> validation_layers;
+	RenderingContext *context;
 
 public:
 	static RenderingContextVulkan *get_singleton();

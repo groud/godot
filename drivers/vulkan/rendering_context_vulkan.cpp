@@ -28,13 +28,12 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#include "os/os.h"
-#include "project_settings.h"
 #include "rendering_context_vulkan.h"
-#include "shaders/frag.h"
-#include "shaders/vert.h"
-#include "version_generated.gen.h"
+#include "os/os.h"
 #include "os_windows.h"
+#include "project_settings.h"
+#include "thirdparty/shaderc/src/libshaderc/include/shaderc/shaderc.h"
+#include "version_generated.gen.h"
 
 #include <Windows.h>
 
@@ -407,8 +406,35 @@ void RenderingContextVulkan::create_graphics_pipeline() {
 
 	VkShaderModuleCreateInfo vert_create_info = {};
 	vert_create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	vert_create_info.codeSize = ___vert_spv_size;
-	vert_create_info.pCode = reinterpret_cast<const uint32_t *>(___vert_spv);
+
+	const char *vert = "#version 450\n"
+					   "#extension GL_ARB_separate_shader_objects : enable\n"
+					   "\n"
+					   "out gl_PerVertex {\n"
+					   "    vec4 gl_Position;\n"
+					   "};\n"
+					   "\n"
+					   "layout(location = 0) out vec3 fragColor;\n"
+					   "\n"
+					   "vec2 positions[3] = vec2[](\n"
+					   "    vec2(0.0, -0.5),\n"
+					   "    vec2(0.5, 0.5),\n"
+					   "    vec2(-0.5, 0.5)\n"
+					   ");\n"
+					   "\n"
+					   "vec3 colors[3] = vec3[](\n"
+					   "    vec3(1.0, 0.0, 0.0),\n"
+					   "    vec3(0.0, 1.0, 0.0),\n"
+					   "    vec3(0.0, 0.0, 1.0)\n"
+					   ");\n"
+					   "\n"
+					   "void main() {\n"
+					   "    gl_Position = vec4(positions[gl_VertexIndex], 0.0, 1.0);\n"
+					   "    fragColor = colors[gl_VertexIndex];\n"
+					   "}\n";
+	const Vector<uint8_t> v = compile_shader(vert, "shader.vert", shaderc_vertex_shader);
+	vert_create_info.codeSize = v.size();
+	vert_create_info.pCode = reinterpret_cast<const uint32_t *>(v.ptr());
 
 	if (vkCreateShaderModule(get_device(), &vert_create_info, NULL, &vert_shader_module) != VK_SUCCESS) {
 		ERR_FAIL("Can't Create Shader Module");
@@ -416,8 +442,20 @@ void RenderingContextVulkan::create_graphics_pipeline() {
 
 	VkShaderModuleCreateInfo frag_create_info = {};
 	frag_create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	frag_create_info.codeSize = ___frag_spv_size;
-	frag_create_info.pCode = reinterpret_cast<const uint32_t *>(___frag_spv);
+
+	const char *frag = "#version 450\n"
+					   "#extension GL_ARB_separate_shader_objects : enable\n"
+					   "\n"
+					   "layout(location = 0) in vec3 fragColor;\n"
+					   "\n"
+					   "layout(location = 0) out vec4 outColor;\n"
+					   "\n"
+					   "void main() {\n"
+					   "    outColor = vec4(fragColor, 1.0);\n"
+					   "}\n";
+	const Vector<uint8_t> f = compile_shader(frag, "shader.frag", shaderc_fragment_shader);
+	frag_create_info.codeSize = f.size();
+	frag_create_info.pCode = reinterpret_cast<const uint32_t *>(f.ptr());
 
 	if (vkCreateShaderModule(get_device(), &frag_create_info, NULL, &frag_shader_module) != VK_SUCCESS) {
 		ERR_FAIL("Can't Create Shader Module");
@@ -567,6 +605,25 @@ void RenderingContextVulkan::create_graphics_pipeline() {
 
 	vkDestroyShaderModule(get_device(), frag_shader_module, NULL);
 	vkDestroyShaderModule(get_device(), vert_shader_module, NULL);
+}
+
+Vector<uint8_t> RenderingContextVulkan::compile_shader(const String text, const String name, const shaderc_shader_kind kind) {
+	const shaderc_compiler_t compiler = shaderc_compiler_initialize();
+	const CharString temp = text.utf8();
+	shaderc_compile_options_t opts = shaderc_compile_options_initialize();
+	shaderc_compile_options_set_target_env(opts, shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_1);
+	shaderc_compile_options_set_optimization_level(opts, shaderc_optimization_level_performance);
+	shaderc_compilation_result_t result = shaderc_compile_into_spv(
+			compiler, temp.ptr(), temp.size() - 1,
+			kind, name.ascii().ptr(), "main", opts);
+
+	const char* bytes =	shaderc_result_get_bytes(result);
+	Vector<uint8_t> v;
+	for (int i = 0; i < shaderc_result_get_length(result); i++) {
+		v.push_back(bytes[i]);
+	}
+	shaderc_result_release(result);
+	return v;
 }
 
 Error RenderingContextVulkan::create_image_views() {

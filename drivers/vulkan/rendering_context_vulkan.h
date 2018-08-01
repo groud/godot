@@ -42,6 +42,7 @@
 #include "platform/windows/os_windows.h"
 
 #include "glad/vulkan.h"
+#include "thirdparty/shaderc/src/libshaderc/include/shaderc/shaderc.h"
 
 class RenderingContextVulkan : public RenderingContext {
 private:
@@ -54,7 +55,7 @@ private:
 	HWND hWnd;
 	bool use_vsync;
 	int glad_vk_version = 0;
-	
+
 	VkInstance instance;
 	VkDebugReportCallbackEXT callback;
 	VkDevice device;
@@ -103,7 +104,6 @@ protected:
 	RenderingContext *context;
 
 public:
-
 	virtual void release_current() = 0;
 
 	virtual void make_current() = 0;
@@ -134,6 +134,9 @@ public:
 	void create_render_pass();
 	void create_framebuffers();
 	void create_graphics_pipeline();
+
+	Vector<uint8_t> compile_shader(const String shader, const String name, const shaderc_shader_kind kind);
+
 	Error create_image_views();
 	Error create_swap_chain();
 	Error create_logical_device();

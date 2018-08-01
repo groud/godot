@@ -5,12 +5,25 @@
 #include "rasterizer_scene_vulkan.h"
 #include "rasterizer_storage_vulkan.h"
 #include "servers/visual/rasterizer.h"
+#include "servers/visual/rendering_context.h"
+
+class MakeCurrentFunctVulkan : public MakeCurrentFunct {
+	RenderingContext *context;
+
+public:
+	virtual Rasterizer *make_current();
+
+	MakeCurrentFunctVulkan(RenderingContext *p_context);
+
+	~MakeCurrentFunctVulkan();
+};
 
 class RasterizerVulkan : public Rasterizer {
 protected:
 	RasterizerCanvasVulkan canvas;
 	RasterizerStorageVulkan storage;
 	RasterizerSceneVulkan scene;
+	RenderingContext *context;
 
 public:
 	RasterizerStorage *get_storage() { return &storage; }
@@ -28,15 +41,11 @@ public:
 	void end_frame(bool p_swap_buffers) {}
 	void finalize() {}
 
-	static Rasterizer *_create_current() {
-		return memnew(RasterizerVulkan);
-	}
+	static void make_current(RenderingContext *context);
 
-	static void make_current() {
-		_create_func = _create_current;
-	}
+	static void register_config();
 
-	RasterizerVulkan() {}
+	RasterizerVulkan(RenderingContext *p_context) { context = p_context; }
 	~RasterizerVulkan() {}
 };
 

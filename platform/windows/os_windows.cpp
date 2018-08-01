@@ -32,6 +32,7 @@
 
 #include "drivers/gles2/rasterizer_gles2.h"
 #include "drivers/gles3/rasterizer_gles3.h"
+#include "drivers/vulkan/rasterizer_vulkan.h"
 #include "drivers/windows/dir_access_windows.h"
 #include "drivers/windows/file_access_windows.h"
 #include "drivers/windows/mutex_windows.h"
@@ -45,6 +46,8 @@
 #include "joypad.h"
 #include "lang_table.h"
 #include "main/main.h"
+#include "platform/windows/rendering_context_vulkan_win.h"
+#include "platform/windows/rendering_context_gl_win.h"
 #include "servers/audio_server.h"
 #include "servers/visual/visual_server_raster.h"
 #include "servers/visual/visual_server_wrap_mt.h"
@@ -1172,22 +1175,28 @@ Error OS_Windows::initialize(const VideoMode &p_desired, int p_video_driver, int
 
 #if defined(OPENGL_ENABLED)
 	if (p_video_driver == VIDEO_DRIVER_GLES2) {
-		gl_context = memnew(RenderingContextGL_Win(hWnd, false));
-		gl_context->initialize();
+		render_context = memnew(RenderingContextGL_Win(hWnd, false));
+		render_context->initialize();
 
 		RasterizerGLES2::register_config();
-		RasterizerGLES2::make_current();
-	} else {
-		gl_context = memnew(RenderingContextGL_Win(hWnd, true));
-		gl_context->initialize();
+		RasterizerGLES2::make_current(render_context);
+	} else if (p_video_driver == VIDEO_DRIVER_GLES3) {
+		render_context = memnew(RenderingContextGL_Win(hWnd, true));
+		render_context->initialize();
 
 		RasterizerGLES3::register_config();
-		RasterizerGLES3::make_current();
+		RasterizerGLES3::make_current(render_context);
+	} else if (p_video_driver == VIDEO_DRIVER_VULKAN) {
+		render_context = memnew(RenderingContextVulkan_Win(hWnd));
+		render_context->initialize();
+
+		RasterizerVulkan::register_config();
+		RasterizerVulkan::make_current(render_context);
 	}
 
 	video_driver_index = p_video_driver; // FIXME TODO - FIX IF DRIVER DETECTION HAPPENS AND GLES2 MUST BE USED
 
-	gl_context->set_use_vsync(video_mode.use_vsync);
+	render_context->set_use_vsync(video_mode.use_vsync);
 #endif
 
 	visual_server = memnew(VisualServerRaster);
@@ -1367,8 +1376,8 @@ void OS_Windows::finalize() {
 	visual_server->finish();
 	memdelete(visual_server);
 #ifdef OPENGL_ENABLED
-	if (gl_context)
-		memdelete(gl_context);
+	if (render_context)
+		memdelete(render_context);
 #endif
 
 	if (user_proc) {
@@ -2570,17 +2579,17 @@ OS::LatinKeyboardVariant OS_Windows::get_latin_keyboard_variant() const {
 
 void OS_Windows::release_rendering_thread() {
 
-	gl_context->release_current();
+	render_context->release_current();
 }
 
 void OS_Windows::make_rendering_thread() {
 
-	gl_context->make_current();
+	render_context->make_current();
 }
 
 void OS_Windows::swap_buffers() {
 
-	gl_context->swap_buffers();
+	render_context->swap_buffers();
 }
 
 void OS_Windows::force_process_input() {
@@ -2751,8 +2760,8 @@ String OS_Windows::get_joy_guid(int p_device) const {
 
 void OS_Windows::_set_use_vsync(bool p_enable) {
 
-	if (gl_context)
-		gl_context->set_use_vsync(p_enable);
+	if (render_context)
+		render_context->set_use_vsync(p_enable);
 }
 /*
 bool OS_Windows::is_vsync_enabled() const {

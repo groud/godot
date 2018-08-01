@@ -8,6 +8,7 @@ import platform_windows_builders
 
 common_win = [
     "rendering_context_gl_win.cpp",
+	"rendering_context_vulkan_win.cpp",
     "crash_handler_win.cpp",
     "os_windows.cpp",
     "ctxgl_procaddr.cpp",

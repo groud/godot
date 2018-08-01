@@ -33,11 +33,11 @@
 #include "os/os.h"
 #include "print_string.h"
 
-Rasterizer *(*Rasterizer::_create_func)() = NULL;
+MakeCurrentFunct *Rasterizer::_create_func = NULL;
 
 Rasterizer *Rasterizer::create() {
 
-	return _create_func();
+	return _create_func->make_current();
 }
 
 RasterizerStorage *RasterizerStorage::base_singleton = NULL;

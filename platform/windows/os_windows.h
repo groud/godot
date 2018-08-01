@@ -86,7 +86,7 @@ class OS_Windows : public OS {
 	int old_x, old_y;
 	Point2i center;
 #if defined(OPENGL_ENABLED)
-	RenderingContextGL_Win *gl_context;
+	RenderingContext *render_context;
 #endif
 	VisualServer *visual_server;
 	int pressrc;

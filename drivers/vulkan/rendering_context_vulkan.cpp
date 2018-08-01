@@ -1,4 +1,3 @@
-
 /*************************************************************************/
 /*  rendering_context_vulkan.cpp                                         */
 /*************************************************************************/
@@ -31,7 +30,7 @@
 
 #include "rendering_context_vulkan.h"
 
-//#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
+#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 
 RenderingContextVulkan *RenderingContextVulkan::singleton = NULL;
 
@@ -53,4 +52,4 @@ RenderingContextVulkan::~RenderingContextVulkan() {
 		singleton = NULL;
 }
 
-//#endif
+#endif

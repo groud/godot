@@ -30,7 +30,9 @@
 
 #include "rendering_context_vulkan_x11.h"
 
-//#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
+//#include <X11/Xcms.h>
+
+#if defined(VULKAN_ENABLED)
 
 void RenderingContextVulkan_X11::release_current() {
 }
@@ -115,4 +117,4 @@ RenderingContextVulkan_X11::RenderingContextVulkan_X11(::Display *p_x11_display,
 RenderingContextVulkan_X11::~RenderingContextVulkan_X11() {
 }
 
-//#endif
+#endif

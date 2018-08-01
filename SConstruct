@@ -157,7 +157,6 @@ opts.Add(BoolVariable('gdscript', "Enable GDScript support", True))
 opts.Add(BoolVariable('minizip', "Enable ZIP archive support using minizip", True))
 opts.Add(BoolVariable('xaudio2', "Enable the XAudio2 audio driver", False))
 opts.Add(BoolVariable('xml', "Enable XML format support for resources", True))
-opts.Add(BoolVariable('vulkan', 'Use Vulkan driver', False))
 
 # Advanced options
 opts.Add(BoolVariable('disable_3d', "Disable 3D nodes for a smaller executable", False))

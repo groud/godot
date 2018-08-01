@@ -32,15 +32,11 @@
 #define RENDERING_CONTEXT_VULKAN_WIN_H
 
 //#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
-
-#include "glad/vulkan.h"
-#include <windows.h>
+#include "typedefs.h"
 
 #include "drivers/vulkan/rendering_context_vulkan.h"
-#include "os/os.h"
-#include "servers/visual/rendering_context.h"
-#include "typedefs.h"
-#include "drivers/vulkan/rasterizer_vulkan.h"
+#include "glad/vulkan.h"
+
 
 class RenderingContextVulkan_Win : public RenderingContextVulkan {
 private:
@@ -67,6 +63,9 @@ public:
 
 	RenderingContextVulkan_Win(HWND hwnd);
 	~RenderingContextVulkan_Win();
+
+public:
+	Error create_surface();
 };
 
 //#endif

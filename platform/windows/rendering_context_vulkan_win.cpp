@@ -29,6 +29,7 @@
 /*************************************************************************/
 
 #include "platform/windows/rendering_context_vulkan_win.h"
+#include "os_windows.h"
 
 #include <windows.h>
 
@@ -56,6 +57,23 @@ int RenderingContextVulkan_Win::get_window_height() {
 
 Error RenderingContextVulkan_Win::initialize() {
 
+	Error error;
+	if ((error = create_instance()) != OK) {
+		return error;
+	}
+	if ((error = create_surface()) != OK) {
+		return error;
+	}
+	if ((error = pick_physical_device()) != OK) {
+		return error;
+	}
+	if ((error = create_logical_device()) != OK) {
+		return error;
+	}
+	if ((error = create_swap_chain()) != OK) {
+		return error;
+	}
+
 	return OK;
 }
 
@@ -81,6 +99,21 @@ RenderingContextVulkan_Win::RenderingContextVulkan_Win(HWND hwnd) {
 }
 
 RenderingContextVulkan_Win::~RenderingContextVulkan_Win() {
+}
+
+Error RenderingContextVulkan_Win::create_surface() {
+	VkWin32SurfaceCreateInfoKHR create_info = {};
+	create_info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+	create_info.hwnd = hWnd;
+	create_info.hinstance = GetModuleHandle(NULL);
+
+	PFN_vkCreateWin32SurfaceKHR CreateWin32SurfaceKHR = (PFN_vkCreateWin32SurfaceKHR)vkGetInstanceProcAddr(get_instance(), "vkCreateWin32SurfaceKHR");
+
+	if (!CreateWin32SurfaceKHR || CreateWin32SurfaceKHR(get_instance(), &create_info, NULL, &surface) != VK_SUCCESS) {
+		MessageBox(NULL, "Can't Create window surface.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		return ERR_CANT_CREATE;
+	}
+	return OK;
 }
 
 //#endif

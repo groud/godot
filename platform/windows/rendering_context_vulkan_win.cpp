@@ -110,7 +110,7 @@ Error RenderingContextVulkan_Win::create_surface() {
 	PFN_vkCreateWin32SurfaceKHR CreateWin32SurfaceKHR = (PFN_vkCreateWin32SurfaceKHR)vkGetInstanceProcAddr(get_instance(), "vkCreateWin32SurfaceKHR");
 
 	if (!CreateWin32SurfaceKHR || CreateWin32SurfaceKHR(get_instance(), &create_info, NULL, &surface) != VK_SUCCESS) {
-		MessageBox(NULL, "Can't Create window surface.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(NULL, "Can't Create Window Surface.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return ERR_CANT_CREATE;
 	}
 	return OK;

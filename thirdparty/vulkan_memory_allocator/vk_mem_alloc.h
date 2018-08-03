@@ -1072,7 +1072,7 @@ Features deliberately excluded from the scope of this library:
 */
 
 #if defined(GLAD_VULKAN)
-#include <glad/vulkan.h>
+#include <thirdparty/glad2/include/glad/vulkan.h>
 #else
 #include <vulkan/vulkan.h>
 #endif

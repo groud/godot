@@ -35,7 +35,7 @@
 #include "typedefs.h"
 
 #include "drivers/vulkan/rendering_context_vulkan.h"
-#include "glad/vulkan.h"
+#include "thirdparty/glad2/include/glad/vulkan.h"
 
 
 class RenderingContextVulkan_Win : public RenderingContextVulkan {

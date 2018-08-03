@@ -37,7 +37,7 @@
 
 #include <Windows.h>
 
-#include "glad/vulkan.h"
+#include "platform/windows/glad_vulkan_win.h"
 
 #if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 

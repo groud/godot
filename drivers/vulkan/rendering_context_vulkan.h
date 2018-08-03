@@ -41,7 +41,7 @@
 
 #include "platform/windows/os_windows.h"
 
-#include "glad/vulkan.h"
+#include "platform/windows/glad_vulkan_win.h"
 #include "thirdparty/shaderc/src/libshaderc/include/shaderc/shaderc.h"
 
 class RenderingContextVulkan : public RenderingContext {

@@ -17,10 +17,8 @@ common_win = [
     "power_windows.cpp",
     "windows_terminal_logger.cpp",
 	"vma_usage.cpp",
-	"glad.cpp"
+	"glad_vulkan_win.cpp"
 ]
-
-env.Append(CPPPATH="thirdparty/glad2/include/")
 
 restarget = "godot_res" + env["OBJSUFFIX"]
 

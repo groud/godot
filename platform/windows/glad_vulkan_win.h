@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  vma_usage.h				                                             */
+/*  glad_vulkan_win.h                                                    */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -27,36 +27,8 @@
 /* TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE     */
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
-#ifndef VULKAN_MEMORY_ALLOCATOR_H
-#define VULKAN_MEMORY_ALLOCATOR_H
-
-#define VMA_STATIC_VULKAN_FUNCTIONS 0
-#define VkMemoryDedicatedAllocateInfoKHR VkMemoryDedicatedAllocateInfo
-#define VkBufferMemoryRequirementsInfo2KHR VkBufferMemoryRequirementsInfo2
-#define VkMemoryDedicatedRequirementsKHR VkMemoryDedicatedRequirements
-#define VkMemoryRequirements2KHR VkMemoryRequirements2
-#define VkImageMemoryRequirementsInfo2KHR VkImageMemoryRequirementsInfo2
-
-#include "reference.h"
-
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#define NOMINMAX
-#define VMA_MAX MAX
-#define VMA_MIN MIN
-#pragma warning(push, 4)
-#pragma warning(disable : 4127) // conditional expression is constant
-#pragma warning(disable : 4100) // unreferenced formal parameter
-#pragma warning(disable : 4189) // local variable is initialized but not referenced
-#endif
-
+#ifndef GLAD_VULKAN_WIN_H
+#define GLAD_VULKAN_WIN_H
+#define VK_USE_PLATFORM_WIN32_KHR 1
 #include "thirdparty/glad2/include/glad/vulkan.h"
-
-#include "thirdparty/vulkan_memory_allocator/vk_mem_alloc.h"
-
-#ifdef _WIN32
-#pragma warning(pop)
-#endif
-
 #endif

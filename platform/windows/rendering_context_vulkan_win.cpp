@@ -32,7 +32,7 @@
 
 #include "glad/vulkan.h"
 
-#include "vulkan_memory_allocator.h"
+#include "vma_usage.h"
 #include "os_windows.h"
 
 #include "platform/windows/rendering_context_vulkan_win.h"

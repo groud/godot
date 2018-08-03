@@ -2,7 +2,7 @@
 
 #include "platform/windows/os_windows.h"
 #include "platform/windows/rendering_context_vulkan_win.h"
-#include "platform/windows/vulkan_memory_allocator.h"
+#include "platform/windows/vma_usage.h"
 
 Rasterizer *MakeCurrentFunctVulkan::make_current() {
 	return memnew(RasterizerVulkan(context));

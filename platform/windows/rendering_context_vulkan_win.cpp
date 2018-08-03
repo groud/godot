@@ -28,13 +28,14 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#include "platform/windows/rendering_context_vulkan_win.h"
-#include "os_windows.h"
-
 #include <windows.h>
 
-#define GLAD_VULKAN_IMPLEMENTATION
 #include "glad/vulkan.h"
+
+#include "vulkan_memory_allocator.h"
+#include "os_windows.h"
+
+#include "platform/windows/rendering_context_vulkan_win.h"
 
 //#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 
@@ -110,8 +111,7 @@ Error RenderingContextVulkan_Win::create_surface() {
 	PFN_vkCreateWin32SurfaceKHR CreateWin32SurfaceKHR = (PFN_vkCreateWin32SurfaceKHR)vkGetInstanceProcAddr(get_instance(), "vkCreateWin32SurfaceKHR");
 
 	if (!CreateWin32SurfaceKHR || CreateWin32SurfaceKHR(get_instance(), &create_info, NULL, &surface) != VK_SUCCESS) {
-		MessageBox(NULL, "Can't Create Window Surface.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
-		return ERR_CANT_CREATE;
+		ERR_FAIL_V(ERR_CANT_CREATE, "Can't Create Window Surface.");
 	}
 	return OK;
 }

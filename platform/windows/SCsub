@@ -15,8 +15,12 @@ common_win = [
     "key_mapping_win.cpp",
     "joypad.cpp",
     "power_windows.cpp",
-    "windows_terminal_logger.cpp"
+    "windows_terminal_logger.cpp",
+	"vulkan_memory_allocator.cpp",
+	"glad.cpp"
 ]
+
+env.Append(CPPPATH="thirdparty/glad2/include/")
 
 restarget = "godot_res" + env["OBJSUFFIX"]
 

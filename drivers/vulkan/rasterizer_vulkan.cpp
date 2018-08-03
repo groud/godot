@@ -2,6 +2,7 @@
 
 #include "platform/windows/os_windows.h"
 #include "platform/windows/rendering_context_vulkan_win.h"
+#include "platform/windows/vulkan_memory_allocator.h"
 
 Rasterizer *MakeCurrentFunctVulkan::make_current() {
 	return memnew(RasterizerVulkan(context));
@@ -9,6 +10,28 @@ Rasterizer *MakeCurrentFunctVulkan::make_current() {
 
 MakeCurrentFunctVulkan::MakeCurrentFunctVulkan(RenderingContext *p_context) {
 	context = p_context;
+
+	VmaAllocatorCreateInfo alloc_info = {};
+
+	VmaVulkanFunctions vma_vulkan_functions;
+	vma_vulkan_functions.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
+	vma_vulkan_functions.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
+	vma_vulkan_functions.vkAllocateMemory = vkAllocateMemory;
+	vma_vulkan_functions.vkFreeMemory = vkFreeMemory;
+	vma_vulkan_functions.vkMapMemory = vkMapMemory;
+	vma_vulkan_functions.vkUnmapMemory = vkUnmapMemory;
+	vma_vulkan_functions.vkBindBufferMemory = vkBindBufferMemory;
+	vma_vulkan_functions.vkBindImageMemory = vkBindImageMemory;
+	vma_vulkan_functions.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements;
+	vma_vulkan_functions.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements;
+	vma_vulkan_functions.vkCreateBuffer = vkCreateBuffer;
+	vma_vulkan_functions.vkDestroyBuffer = vkDestroyBuffer;
+	vma_vulkan_functions.vkCreateImage = vkCreateImage;
+	vma_vulkan_functions.vkDestroyImage = vkDestroyImage;
+	vma_vulkan_functions.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR;
+	vma_vulkan_functions.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR;
+
+	alloc_info.pVulkanFunctions = &vma_vulkan_functions;
 }
 
 MakeCurrentFunctVulkan::~MakeCurrentFunctVulkan() {

@@ -1,40 +1,42 @@
 #ifndef RASTERIZER_VULKAN_H
 #define RASTERIZER_VULKAN_H
 
+#if defined(VULKAN_ENABLED)
+
 #include "core/project_settings.h"
-#include "servers/visual/rendering_context.h"
 #include "os/os.h"
-#include "platform/windows/rendering_context_vulkan_win.h"
 #include "servers/visual/rasterizer.h"
+#include "servers/visual/rendering_context.h"
 
 #include "rasterizer_canvas_vulkan.h"
 #include "rasterizer_scene_vulkan.h"
 #include "rasterizer_storage_vulkan.h"
 
-class MakeCurrentFunctVulkan : public MakeCurrentFunct {
-	RenderingContext *context;
-
-public:
-	virtual Rasterizer *make_current();
-
-	MakeCurrentFunctVulkan(RenderingContext *p_context);
-
-	~MakeCurrentFunctVulkan();
-};
+#include "glad/vulkan.h"
 
 class RasterizerVulkan : public Rasterizer {
+
+	// To be filled in
+	VkInstance *instance;
+	VkDevice *device;
+	VkPhysicalDevice *physical_device = VK_NULL_HANDLE;
+	VkQueue *graphics_queue;
+	VkQueue *present_queue;
+	VkSwapchainKHR *swap_chain;
+	VkFormat *swap_chain_image_format;
+	VkExtent2D *swap_chain_extent;
+	Vector<VkFramebuffer> *swap_chain_framebuffers;
+	// ------------------
+
 protected:
 	RasterizerCanvasVulkan canvas;
 	RasterizerStorageVulkan storage;
 	RasterizerSceneVulkan scene;
-	RenderingContext *context;
 
 public:
-	RenderingContextVulkan_Win *get_instance_vulkan();
 	RasterizerStorage *get_storage() { return &storage; }
 	RasterizerCanvas *get_canvas() { return &canvas; }
 	RasterizerScene *get_scene() { return &scene; }
-
 
 	void set_boot_image(const Ref<Image> &p_image, const Color &p_color, bool p_scale) {}
 
@@ -47,12 +49,13 @@ public:
 	void end_frame(bool p_swap_buffers);
 	void finalize() {}
 
-	static void make_current(RenderingContext *context);
+	static void make_current();
 
 	static void register_config();
 
-	RasterizerVulkan(RenderingContext *p_context) { context = p_context; }
-	~RasterizerVulkan() {}
+	RasterizerVulkan() {}
+	~RasterizerVulkan();
 };
 
+#endif
 #endif // RASTERIZER_VULKAN_H

@@ -392,8 +392,11 @@ void RasterizerGLES3::finalize() {
 	canvas->finalize();
 }
 
-void RasterizerGLES3::make_current(RenderingContext *context) {
-	_create_func = memnew(MakeCurrentFunctGLES3(context));
+void RasterizerGLES3::make_current() {
+	if (_instance != NULL) {
+		memdelete(_instance);
+	}
+	_instance = memnew(RasterizerGLES3);
 }
 
 void RasterizerGLES3::register_config() {
@@ -404,8 +407,7 @@ void RasterizerGLES3::register_config() {
 	GLOBAL_DEF("rendering/limits/time/time_rollover_secs", 3600);
 }
 
-RasterizerGLES3::RasterizerGLES3(RenderingContext *p_context) {
-	context = p_context;
+RasterizerGLES3::RasterizerGLES3() {
 	storage = memnew(RasterizerStorageGLES3);
 	canvas = memnew(RasterizerCanvasGLES3);
 	scene = memnew(RasterizerSceneGLES3);
@@ -423,16 +425,4 @@ RasterizerGLES3::~RasterizerGLES3() {
 	memdelete(storage);
 	memdelete(canvas);
 	memdelete(scene);
-}
-
-
-Rasterizer *MakeCurrentFunctGLES3::make_current() {
-	return memnew(RasterizerGLES3(context));
-}
-
-MakeCurrentFunctGLES3::MakeCurrentFunctGLES3(RenderingContext *p_context) {
-	context = p_context;
-}
-
-MakeCurrentFunctGLES3::~MakeCurrentFunctGLES3() {
 }

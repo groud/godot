@@ -31,14 +31,19 @@
 #ifndef RENDERING_CONTEXT_VULKAN_X11_H
 #define RENDERING_CONTEXT_VULKAN_X11_H
 
-//#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
+#if defined(VULKAN_ENABLED)
+
+#include <X11/Xlib.h>
+#define VK_USE_PLATFORM_XLIB_KHR
+#include "glad/vulkan.h"
+#undef CursorShape
 
 #include "os/os.h"
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
 
-#include "typedefs.h"
 #include "drivers/vulkan/rendering_context_vulkan.h"
+#include "typedefs.h"
 
 class RenderingContextVulkan_X11 : public RenderingContextVulkan {
 private:
@@ -46,15 +51,12 @@ private:
 	::Display *x11_display;
 	::Window &x11_window;
 
+protected:
+	virtual char *_get_surface_extension() const;
+	virtual Error _create_window();
+	virtual void _create_surface();
+
 public:
-	virtual void release_current();
-	virtual void make_current();
-	virtual void swap_buffers();
-	virtual int get_window_width();
-	virtual int get_window_height();
-
-	virtual Error initialize();
-
 	virtual void set_use_vsync(bool p_use);
 	virtual bool is_using_vsync() const;
 
@@ -62,6 +64,6 @@ public:
 	~RenderingContextVulkan_X11();
 };
 
-//#endif
+#endif
 
 #endif

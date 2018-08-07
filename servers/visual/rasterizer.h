@@ -1064,23 +1064,12 @@ public:
 	virtual ~RasterizerCanvas() {}
 };
 
-class Rasterizer;
-class MakeCurrentFunct {
-public:
-	virtual Rasterizer *make_current() = 0;
-	virtual ~MakeCurrentFunct() = 0;
-};
-
-inline MakeCurrentFunct::~MakeCurrentFunct() {} // defined even though it's pure virtual; it's faster this way; trust me
-
 class Rasterizer {
-
 protected:
-	static MakeCurrentFunct *_create_func;
-
+	static Rasterizer *_instance;
 
 public:
-	static Rasterizer *create();
+	static Rasterizer *get_instance() { return _instance; };
 
 	virtual RasterizerStorage *get_storage() = 0;
 	virtual RasterizerCanvas *get_canvas() = 0;
@@ -1097,7 +1086,7 @@ public:
 	virtual void end_frame(bool p_swap_buffers) = 0;
 	virtual void finalize() = 0;
 
-	virtual ~Rasterizer() {}
+	virtual ~Rasterizer();
 };
 
 #endif // RASTERIZER_H

@@ -275,10 +275,11 @@ Error OS_X11::initialize(const VideoMode &p_desired, int p_video_driver, int p_a
 	switch (p_video_driver) {
 #if defined(VULKAN_ENABLED)
 		case VIDEO_DRIVER_VULKAN:
-			RasterizerVulkan::make_current();
-
+			print_line("Vulkan, I choose you !");
 			rendering_context = memnew(RenderingContextVulkan_X11(x11_display, x11_window, current_videomode));
 			rendering_context->initialize();
+
+			RasterizerVulkan::make_current();
 			break;
 #endif
 #if defined(OPENGL_ENABLED)
@@ -2554,21 +2555,20 @@ void OS_X11::set_custom_mouse_cursor(const RES &p_cursor, CursorShape p_shape, c
 
 void OS_X11::release_rendering_thread() {
 
-#if defined(OPENGL_ENABLED)
+#if defined(OPENGL_ENABLED) || defined(VULKAN_ENABLED)
 	rendering_context->release_current();
 #endif
 }
 
 void OS_X11::make_rendering_thread() {
 
-#if defined(OPENGL_ENABLED)
+#if defined(OPENGL_ENABLED) || defined(VULKAN_ENABLED)
 	rendering_context->make_current();
 #endif
 }
 
 void OS_X11::swap_buffers() {
-
-#if defined(OPENGL_ENABLED)
+#if defined(OPENGL_ENABLED) || defined(VULKAN_ENABLED)
 	rendering_context->swap_buffers();
 #endif
 }

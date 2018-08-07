@@ -36,23 +36,10 @@
 #include "servers/visual/rasterizer.h"
 #include "servers/visual/rendering_context.h"
 
-class MakeCurrentFunctGLES2 : public MakeCurrentFunct {
-	RenderingContext *context;
-
-public:
-	virtual Rasterizer *make_current();
-
-	MakeCurrentFunctGLES2(RenderingContext *p_context);
-
-	~MakeCurrentFunctGLES2();
-};
-
 class RasterizerGLES2 : public Rasterizer {
 	RasterizerStorageGLES2 *storage;
 	RasterizerCanvasGLES2 *canvas;
 	RasterizerSceneGLES2 *scene;
-
-	RenderingContext *context;
 
 	double time_total;
 
@@ -72,10 +59,10 @@ public:
 	virtual void end_frame(bool p_swap_buffers);
 	virtual void finalize();
 
-	static void make_current(RenderingContext *context);
+	static void make_current();
 
 	static void register_config();
-	RasterizerGLES2(RenderingContext *p_context);
+	RasterizerGLES2();
 	~RasterizerGLES2();
 };
 

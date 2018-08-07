@@ -30,24 +30,12 @@
 
 #include "rendering_context_vulkan_x11.h"
 
-//#include <X11/Xcms.h>
-
 #if defined(VULKAN_ENABLED)
 
-void RenderingContextVulkan_X11::release_current() {
-}
-
-void RenderingContextVulkan_X11::make_current() {
-}
-
-void RenderingContextVulkan_X11::swap_buffers() {
-}
-
-int RenderingContextVulkan_X11::get_window_width() {
-}
-
-int RenderingContextVulkan_X11::get_window_height() {
-}
+#include <X11/Xlib.h>
+#define VK_USE_PLATFORM_XLIB_KHR
+#define GLAD_VULKAN_IMPLEMENTATION
+#include "glad/vulkan.h"
 
 static void set_class_hint(Display *p_display, Window p_window) {
 	XClassHint *classHint;
@@ -62,7 +50,7 @@ static void set_class_hint(Display *p_display, Window p_window) {
 	XFree(classHint);
 }
 
-Error RenderingContextVulkan_X11::initialize() {
+Error RenderingContextVulkan_X11::_create_window() {
 
 	// TODO: improve to use XCreateColormap, and determine best parameters instead of defaults ones
 
@@ -99,6 +87,26 @@ Error RenderingContextVulkan_X11::initialize() {
 	XSync(x11_display, False);
 
 	return OK;
+}
+
+char *RenderingContextVulkan_X11::_get_surface_extension() const {
+	return VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
+}
+
+void RenderingContextVulkan_X11::_create_surface() {
+	VkXlibSurfaceCreateInfoKHR surfaceCreateInfo;
+	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+	surfaceCreateInfo.pNext = NULL;
+	surfaceCreateInfo.flags = 0;
+	surfaceCreateInfo.dpy = x11_display;
+	surfaceCreateInfo.window = x11_window;
+
+	VkResult result = vkCreateXlibSurfaceKHR(instance, &surfaceCreateInfo, NULL, &surface);
+
+	if (result != VK_SUCCESS) {
+		ERR_EXPLAIN("failed to create window surface!");
+		ERR_FAIL();
+	}
 }
 
 void RenderingContextVulkan_X11::set_use_vsync(bool p_use) {

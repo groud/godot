@@ -195,7 +195,7 @@ VisualServerRaster::VisualServerRaster() {
 	VSG::canvas = memnew(VisualServerCanvas);
 	VSG::viewport = memnew(VisualServerViewport);
 	VSG::scene = memnew(VisualServerScene);
-	VSG::rasterizer = Rasterizer::create();
+	VSG::rasterizer = Rasterizer::get_instance();
 	VSG::storage = VSG::rasterizer->get_storage();
 	VSG::canvas_render = VSG::rasterizer->get_canvas();
 	VSG::scene_render = VSG::rasterizer->get_scene();

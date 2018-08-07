@@ -213,8 +213,7 @@ def configure_msvc(env, manual_msvc_config):
     if env["bits"] == "64":
         env.AppendUnique(CPPDEFINES=['_WIN64'])
 
-    if env['vulkan']:
-        env.AppendUnique(CPPDEFINES=['VULKAN_ENABLED', 'VK_USE_PLATFORM_WIN32_KHR'])
+    env.AppendUnique(CPPDEFINES=['VULKAN_ENABLED', 'VK_USE_PLATFORM_WIN32_KHR'])
 
     ## Libs
 

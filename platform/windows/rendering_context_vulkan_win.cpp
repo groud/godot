@@ -33,9 +33,6 @@
 
 #include <windows.h>
 
-#define GLAD_VULKAN_IMPLEMENTATION
-#include "glad/vulkan.h"
-
 //#if defined(OPENGL_ENABLED) || defined(GLES_ENABLED)
 
 void RenderingContextVulkan_Win::release_current() {

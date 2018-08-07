@@ -36,7 +36,7 @@
 */
 #ifdef X11_ENABLED
 
-#if defined(VULKAN_ENABLED)
+#if defined(OPENGL_ENABLED)
 
 #include "os/os.h"
 #include "servers/visual/rendering_context.h"

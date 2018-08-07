@@ -40,12 +40,11 @@
 */
 
 class RenderingContext {
-
 	static RenderingContext *singleton;
 
-public:
 	static RenderingContext *get_singleton();
 
+public:
 	virtual void release_current() = 0;
 
 	virtual void make_current() = 0;

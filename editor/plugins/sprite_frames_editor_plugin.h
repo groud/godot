@@ -47,10 +47,12 @@ class SpriteFramesEditor : public PanelContainer {
 	Button *_delete;
 	Button *copy;
 	Button *paste;
+	Button *duplicate;
 	Button *empty;
 	Button *empty2;
 	Button *move_up;
 	Button *move_down;
+
 	ItemList *tree;
 	bool loading_scene;
 	int sel;
@@ -82,6 +84,7 @@ class SpriteFramesEditor : public PanelContainer {
 	void _up_pressed();
 	void _down_pressed();
 	void _update_library(bool p_skip_selector = false);
+	void _duplicate_pressed();
 
 	void _animation_select();
 	void _animation_name_edited();

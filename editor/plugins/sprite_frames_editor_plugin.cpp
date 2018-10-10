@@ -49,6 +49,7 @@ void SpriteFramesEditor::_notification(int p_what) {
 		paste->set_icon(get_icon("ActionPaste", "EditorIcons"));
 		empty->set_icon(get_icon("InsertBefore", "EditorIcons"));
 		empty2->set_icon(get_icon("InsertAfter", "EditorIcons"));
+		duplicate->set_icon(get_icon("Duplicate", "EditorIcons"));
 		move_up->set_icon(get_icon("MoveLeft", "EditorIcons"));
 		move_down->set_icon(get_icon("MoveRight", "EditorIcons"));
 		_delete->set_icon(get_icon("Remove", "EditorIcons"));
@@ -208,6 +209,28 @@ void SpriteFramesEditor::_empty2_pressed() {
 	undo_redo->add_do_method(this, "_update_library");
 	undo_redo->add_undo_method(this, "_update_library");
 	undo_redo->commit_action();
+}
+
+void SpriteFramesEditor::_duplicate_pressed() {
+	ERR_FAIL_COND(!frames->has_animation(edited_anim));
+
+	int from = tree->get_current();
+
+	if (from < 0)
+		return;
+	Ref<Texture> r = frames->get_frame(edited_anim, from);
+	if (!r.is_valid()) {
+		return;
+	}
+
+	undo_redo->create_action(TTR("Duplicate frame"));
+	undo_redo->add_do_method(frames, "add_frame", edited_anim, r, from + 1);
+	undo_redo->add_undo_method(frames, "remove_frame", edited_anim, from + 1);
+	undo_redo->add_do_method(this, "_update_library");
+	undo_redo->add_undo_method(this, "_update_library");
+	undo_redo->commit_action();
+
+	tree->select(from);
 }
 
 void SpriteFramesEditor::_up_pressed() {
@@ -654,6 +677,7 @@ void SpriteFramesEditor::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_load_pressed"), &SpriteFramesEditor::_load_pressed);
 	ClassDB::bind_method(D_METHOD("_empty_pressed"), &SpriteFramesEditor::_empty_pressed);
 	ClassDB::bind_method(D_METHOD("_empty2_pressed"), &SpriteFramesEditor::_empty2_pressed);
+	ClassDB::bind_method(D_METHOD("_duplicate_pressed"), &SpriteFramesEditor::_duplicate_pressed);
 	ClassDB::bind_method(D_METHOD("_delete_pressed"), &SpriteFramesEditor::_delete_pressed);
 	ClassDB::bind_method(D_METHOD("_copy_pressed"), &SpriteFramesEditor::_copy_pressed);
 	ClassDB::bind_method(D_METHOD("_paste_pressed"), &SpriteFramesEditor::_paste_pressed);
@@ -749,6 +773,11 @@ SpriteFramesEditor::SpriteFramesEditor() {
 	paste->set_tooltip(TTR("Paste"));
 	hbc->add_child(paste);
 
+	duplicate = memnew(Button);
+	duplicate->set_flat(true);
+	duplicate->set_tooltip(TTR("Duplicate"));
+	hbc->add_child(duplicate);
+
 	empty = memnew(Button);
 	empty->set_flat(true);
 	empty->set_tooltip(TTR("Insert Empty (Before)"));
@@ -802,6 +831,7 @@ SpriteFramesEditor::SpriteFramesEditor() {
 	paste->connect("pressed", this, "_paste_pressed");
 	empty->connect("pressed", this, "_empty_pressed");
 	empty2->connect("pressed", this, "_empty2_pressed");
+	duplicate->connect("pressed", this, "_duplicate_pressed");
 	move_up->connect("pressed", this, "_up_pressed");
 	move_down->connect("pressed", this, "_down_pressed");
 	file->connect("files_selected", this, "_file_load_request");

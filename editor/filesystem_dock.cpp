@@ -809,7 +809,7 @@ void FileSystemDock::_select_file(const String p_path) {
 void FileSystemDock::_tree_activate_file() {
 	TreeItem *selected = tree->get_selected();
 	if (selected) {
-		call_deferred("_select_file", selected->get_metadata(0));
+		_select_file(selected->get_metadata(0));
 
 		if (path.ends_with("/") || path == "Favorites") {
 			bool collapsed = selected->is_collapsed();

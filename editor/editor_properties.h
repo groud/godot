@@ -625,6 +625,7 @@ public:
 	virtual void parse_begin(Object *p_object);
 	virtual bool parse_property(Object *p_object, Variant::Type p_type, const String &p_path, PropertyHint p_hint, const String &p_hint_text, int p_usage);
 	virtual void parse_end();
+	static EditorProperty *get_default_editor_for_property(Variant::Type p_type, const String &p_path, PropertyHint p_hint, const String &p_hint_text, int p_usage);
 };
 
 #endif // EDITOR_PROPERTIES_H

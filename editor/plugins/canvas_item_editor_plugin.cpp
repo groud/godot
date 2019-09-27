@@ -3678,7 +3678,6 @@ void CanvasItemEditor::_notification(int p_what) {
 	if (p_what == NOTIFICATION_PHYSICS_PROCESS) {
 		EditorNode::get_singleton()->get_scene_root()->set_snap_controls_to_pixels(GLOBAL_GET("gui/common/snap_controls_to_pixels"));
 
-		bool has_container_parents = false;
 		int nb_control = 0;
 		int nb_having_pivot = 0;
 
@@ -3722,10 +3721,6 @@ void CanvasItemEditor::_notification(int p_what) {
 					viewport->update();
 				}
 				nb_control++;
-
-				if (Object::cast_to<Container>(control->get_parent())) {
-					has_container_parents = true;
-				}
 			}
 
 			if (canvas_item->_edit_use_pivot()) {
@@ -3735,28 +3730,6 @@ void CanvasItemEditor::_notification(int p_what) {
 
 		// Activate / Deactivate the pivot tool
 		pivot_button->set_disabled(nb_having_pivot == 0);
-
-		// Show / Hide the layout and anchors mode buttons
-		if (nb_control > 0 && nb_control == selection.size()) {
-			presets_menu->set_visible(true);
-			anchor_mode_button->set_visible(true);
-
-			// Disable if the selected node is child of a container
-			if (has_container_parents) {
-				presets_menu->set_disabled(true);
-				presets_menu->set_tooltip(TTR("Children of containers have their anchors and margins values overridden by their parent."));
-				anchor_mode_button->set_disabled(true);
-				anchor_mode_button->set_tooltip(TTR("Children of containers have their anchors and margins values overridden by their parent."));
-			} else {
-				presets_menu->set_disabled(false);
-				presets_menu->set_tooltip(TTR("Presets for the anchors and margins values of a Control node."));
-				anchor_mode_button->set_disabled(false);
-				anchor_mode_button->set_tooltip(TTR("When active, moving Control nodes changes their anchors instead of their margins."));
-			}
-		} else {
-			presets_menu->set_visible(false);
-			anchor_mode_button->set_visible(false);
-		}
 
 		// Update the viewport if bones changes
 		for (Map<BoneKey, BoneList>::Element *E = bone_list.front(); E; E = E->next()) {
@@ -3841,57 +3814,6 @@ void CanvasItemEditor::_notification(int p_what) {
 
 		zoom_minus->set_icon(get_icon("ZoomLess", "EditorIcons"));
 		zoom_plus->set_icon(get_icon("ZoomMore", "EditorIcons"));
-
-		presets_menu->set_icon(get_icon("ControlLayout", "EditorIcons"));
-		PopupMenu *p = presets_menu->get_popup();
-
-		p->clear();
-		p->add_icon_item(get_icon("ControlAlignTopLeft", "EditorIcons"), TTR("Top Left"), ANCHORS_AND_MARGINS_PRESET_TOP_LEFT);
-		p->add_icon_item(get_icon("ControlAlignTopRight", "EditorIcons"), TTR("Top Right"), ANCHORS_AND_MARGINS_PRESET_TOP_RIGHT);
-		p->add_icon_item(get_icon("ControlAlignBottomRight", "EditorIcons"), TTR("Bottom Right"), ANCHORS_AND_MARGINS_PRESET_BOTTOM_RIGHT);
-		p->add_icon_item(get_icon("ControlAlignBottomLeft", "EditorIcons"), TTR("Bottom Left"), ANCHORS_AND_MARGINS_PRESET_BOTTOM_LEFT);
-		p->add_separator();
-		p->add_icon_item(get_icon("ControlAlignLeftCenter", "EditorIcons"), TTR("Center Left"), ANCHORS_AND_MARGINS_PRESET_CENTER_LEFT);
-		p->add_icon_item(get_icon("ControlAlignTopCenter", "EditorIcons"), TTR("Center Top"), ANCHORS_AND_MARGINS_PRESET_CENTER_TOP);
-		p->add_icon_item(get_icon("ControlAlignRightCenter", "EditorIcons"), TTR("Center Right"), ANCHORS_AND_MARGINS_PRESET_CENTER_RIGHT);
-		p->add_icon_item(get_icon("ControlAlignBottomCenter", "EditorIcons"), TTR("Center Bottom"), ANCHORS_AND_MARGINS_PRESET_CENTER_BOTTOM);
-		p->add_icon_item(get_icon("ControlAlignCenter", "EditorIcons"), TTR("Center"), ANCHORS_AND_MARGINS_PRESET_CENTER);
-		p->add_separator();
-		p->add_icon_item(get_icon("ControlAlignLeftWide", "EditorIcons"), TTR("Left Wide"), ANCHORS_AND_MARGINS_PRESET_LEFT_WIDE);
-		p->add_icon_item(get_icon("ControlAlignTopWide", "EditorIcons"), TTR("Top Wide"), ANCHORS_AND_MARGINS_PRESET_TOP_WIDE);
-		p->add_icon_item(get_icon("ControlAlignRightWide", "EditorIcons"), TTR("Right Wide"), ANCHORS_AND_MARGINS_PRESET_RIGHT_WIDE);
-		p->add_icon_item(get_icon("ControlAlignBottomWide", "EditorIcons"), TTR("Bottom Wide"), ANCHORS_AND_MARGINS_PRESET_BOTTOM_WIDE);
-		p->add_icon_item(get_icon("ControlVcenterWide", "EditorIcons"), TTR("VCenter Wide"), ANCHORS_AND_MARGINS_PRESET_VCENTER_WIDE);
-		p->add_icon_item(get_icon("ControlHcenterWide", "EditorIcons"), TTR("HCenter Wide"), ANCHORS_AND_MARGINS_PRESET_HCENTER_WIDE);
-		p->add_separator();
-		p->add_icon_item(get_icon("ControlAlignWide", "EditorIcons"), TTR("Full Rect"), ANCHORS_AND_MARGINS_PRESET_WIDE);
-		p->add_icon_item(get_icon("Anchor", "EditorIcons"), TTR("Keep Ratio"), ANCHORS_AND_MARGINS_PRESET_KEEP_RATIO);
-		p->add_separator();
-		p->add_submenu_item(TTR("Anchors only"), "Anchors");
-		p->set_item_icon(21, get_icon("Anchor", "EditorIcons"));
-
-		anchors_popup->clear();
-		anchors_popup->add_icon_item(get_icon("ControlAlignTopLeft", "EditorIcons"), TTR("Top Left"), ANCHORS_PRESET_TOP_LEFT);
-		anchors_popup->add_icon_item(get_icon("ControlAlignTopRight", "EditorIcons"), TTR("Top Right"), ANCHORS_PRESET_TOP_RIGHT);
-		anchors_popup->add_icon_item(get_icon("ControlAlignBottomRight", "EditorIcons"), TTR("Bottom Right"), ANCHORS_PRESET_BOTTOM_RIGHT);
-		anchors_popup->add_icon_item(get_icon("ControlAlignBottomLeft", "EditorIcons"), TTR("Bottom Left"), ANCHORS_PRESET_BOTTOM_LEFT);
-		anchors_popup->add_separator();
-		anchors_popup->add_icon_item(get_icon("ControlAlignLeftCenter", "EditorIcons"), TTR("Center Left"), ANCHORS_PRESET_CENTER_LEFT);
-		anchors_popup->add_icon_item(get_icon("ControlAlignTopCenter", "EditorIcons"), TTR("Center Top"), ANCHORS_PRESET_CENTER_TOP);
-		anchors_popup->add_icon_item(get_icon("ControlAlignRightCenter", "EditorIcons"), TTR("Center Right"), ANCHORS_PRESET_CENTER_RIGHT);
-		anchors_popup->add_icon_item(get_icon("ControlAlignBottomCenter", "EditorIcons"), TTR("Center Bottom"), ANCHORS_PRESET_CENTER_BOTTOM);
-		anchors_popup->add_icon_item(get_icon("ControlAlignCenter", "EditorIcons"), TTR("Center"), ANCHORS_PRESET_CENTER);
-		anchors_popup->add_separator();
-		anchors_popup->add_icon_item(get_icon("ControlAlignLeftWide", "EditorIcons"), TTR("Left Wide"), ANCHORS_PRESET_LEFT_WIDE);
-		anchors_popup->add_icon_item(get_icon("ControlAlignTopWide", "EditorIcons"), TTR("Top Wide"), ANCHORS_PRESET_TOP_WIDE);
-		anchors_popup->add_icon_item(get_icon("ControlAlignRightWide", "EditorIcons"), TTR("Right Wide"), ANCHORS_PRESET_RIGHT_WIDE);
-		anchors_popup->add_icon_item(get_icon("ControlAlignBottomWide", "EditorIcons"), TTR("Bottom Wide"), ANCHORS_PRESET_BOTTOM_WIDE);
-		anchors_popup->add_icon_item(get_icon("ControlVcenterWide", "EditorIcons"), TTR("VCenter Wide"), ANCHORS_PRESET_VCENTER_WIDE);
-		anchors_popup->add_icon_item(get_icon("ControlHcenterWide", "EditorIcons"), TTR("HCenter Wide"), ANCHORS_PRESET_HCENTER_WIDE);
-		anchors_popup->add_separator();
-		anchors_popup->add_icon_item(get_icon("ControlAlignWide", "EditorIcons"), TTR("Full Rect"), ANCHORS_PRESET_WIDE);
-
-		anchor_mode_button->set_icon(get_icon("Anchor", "EditorIcons"));
 	}
 
 	if (p_what == NOTIFICATION_VISIBILITY_CHANGED) {
@@ -3902,32 +3824,6 @@ void CanvasItemEditor::_notification(int p_what) {
 			override_camera_button->set_pressed(false);
 		}
 	}
-}
-
-void CanvasItemEditor::_selection_changed() {
-	// Update the anchors_mode
-	int nbValidControls = 0;
-	int nbAnchorsMode = 0;
-	List<Node *> selection = editor_selection->get_selected_node_list();
-	for (List<Node *>::Element *E = selection.front(); E; E = E->next()) {
-		Control *control = Object::cast_to<Control>(E->get());
-		if (!control)
-			continue;
-		if (Object::cast_to<Container>(control->get_parent()))
-			continue;
-
-		nbValidControls++;
-		if (control->has_meta("_edit_use_anchors_") && control->get_meta("_edit_use_anchors_")) {
-			nbAnchorsMode++;
-		}
-	}
-	anchors_mode = (nbValidControls == nbAnchorsMode);
-	anchor_mode_button->set_pressed(anchors_mode);
-
-	if (!selected_from_canvas) {
-		drag_type = DRAG_NONE;
-	}
-	selected_from_canvas = false;
 }
 
 void CanvasItemEditor::edit(CanvasItem *p_canvas_item) {
@@ -4112,93 +4008,6 @@ void CanvasItemEditor::_update_scroll(float) {
 	viewport->update();
 }
 
-void CanvasItemEditor::_set_anchors_and_margins_preset(Control::LayoutPreset p_preset) {
-	List<Node *> selection = editor_selection->get_selected_node_list();
-
-	undo_redo->create_action(TTR("Change Anchors and Margins"));
-
-	for (List<Node *>::Element *E = selection.front(); E; E = E->next()) {
-
-		Control *control = Object::cast_to<Control>(E->get());
-		if (control) {
-			undo_redo->add_do_method(control, "set_anchors_preset", p_preset);
-			switch (p_preset) {
-				case PRESET_TOP_LEFT:
-				case PRESET_TOP_RIGHT:
-				case PRESET_BOTTOM_LEFT:
-				case PRESET_BOTTOM_RIGHT:
-				case PRESET_CENTER_LEFT:
-				case PRESET_CENTER_TOP:
-				case PRESET_CENTER_RIGHT:
-				case PRESET_CENTER_BOTTOM:
-				case PRESET_CENTER:
-					undo_redo->add_do_method(control, "set_margins_preset", p_preset, Control::PRESET_MODE_KEEP_SIZE);
-					break;
-				case PRESET_LEFT_WIDE:
-				case PRESET_TOP_WIDE:
-				case PRESET_RIGHT_WIDE:
-				case PRESET_BOTTOM_WIDE:
-				case PRESET_VCENTER_WIDE:
-				case PRESET_HCENTER_WIDE:
-				case PRESET_WIDE:
-					undo_redo->add_do_method(control, "set_margins_preset", p_preset, Control::PRESET_MODE_MINSIZE);
-					break;
-			}
-			undo_redo->add_undo_method(control, "_edit_set_state", control->_edit_get_state());
-		}
-	}
-
-	undo_redo->commit_action();
-
-	anchors_mode = false;
-	anchor_mode_button->set_pressed(anchors_mode);
-}
-
-void CanvasItemEditor::_set_anchors_and_margins_to_keep_ratio() {
-	List<Node *> selection = editor_selection->get_selected_node_list();
-
-	undo_redo->create_action(TTR("Change Anchors and Margins"));
-
-	for (List<Node *>::Element *E = selection.front(); E; E = E->next()) {
-
-		Control *control = Object::cast_to<Control>(E->get());
-		if (control) {
-			Point2 top_left_anchor = _position_to_anchor(control, Point2());
-			Point2 bottom_right_anchor = _position_to_anchor(control, control->get_size());
-			undo_redo->add_do_method(control, "set_anchor", MARGIN_LEFT, top_left_anchor.x, false, true);
-			undo_redo->add_do_method(control, "set_anchor", MARGIN_RIGHT, bottom_right_anchor.x, false, true);
-			undo_redo->add_do_method(control, "set_anchor", MARGIN_TOP, top_left_anchor.y, false, true);
-			undo_redo->add_do_method(control, "set_anchor", MARGIN_BOTTOM, bottom_right_anchor.y, false, true);
-			undo_redo->add_do_method(control, "set_meta", "_edit_use_anchors_", true);
-
-			bool use_anchors = control->has_meta("_edit_use_anchors_") && control->get_meta("_edit_use_anchors_");
-			undo_redo->add_undo_method(control, "_edit_set_state", control->_edit_get_state());
-			undo_redo->add_undo_method(control, "set_meta", "_edit_use_anchors_", use_anchors);
-
-			anchors_mode = true;
-			anchor_mode_button->set_pressed(anchors_mode);
-		}
-	}
-
-	undo_redo->commit_action();
-}
-
-void CanvasItemEditor::_set_anchors_preset(Control::LayoutPreset p_preset) {
-	List<Node *> selection = editor_selection->get_selected_node_list();
-
-	undo_redo->create_action(TTR("Change Anchors"));
-	for (List<Node *>::Element *E = selection.front(); E; E = E->next()) {
-
-		Control *control = Object::cast_to<Control>(E->get());
-		if (control) {
-			undo_redo->add_do_method(control, "set_anchors_preset", p_preset);
-			undo_redo->add_undo_method(control, "_edit_set_state", control->_edit_get_state());
-		}
-	}
-
-	undo_redo->commit_action();
-}
-
 void CanvasItemEditor::_zoom_on_position(float p_zoom, Point2 p_position) {
 	if (p_zoom < MIN_ZOOM || p_zoom > MAX_ZOOM)
 		return;
@@ -4339,20 +4148,6 @@ void CanvasItemEditor::_insert_animation_keys(bool p_location, bool p_rotation, 
 				AnimationPlayerEditor::singleton->get_track_editor()->insert_node_value_key(ctrl, "rect_size", ctrl->get_size(), p_on_existing);
 		}
 	}
-}
-
-void CanvasItemEditor::_button_toggle_anchor_mode(bool p_status) {
-	List<CanvasItem *> selection = _get_edited_canvas_items(false, false);
-	for (List<CanvasItem *>::Element *E = selection.front(); E; E = E->next()) {
-		Control *control = Object::cast_to<Control>(E->get());
-		if (!control || Object::cast_to<Container>(control->get_parent()))
-			continue;
-
-		control->set_meta("_edit_use_anchors_", p_status);
-	}
-
-	anchors_mode = p_status;
-	viewport->update();
 }
 
 void CanvasItemEditor::_update_override_camera_button(bool p_game_running) {
@@ -4554,106 +4349,6 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 			undo_redo->add_do_method(viewport, "update", Variant());
 			undo_redo->add_undo_method(viewport, "update", Variant());
 			undo_redo->commit_action();
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_TOP_LEFT: {
-			_set_anchors_and_margins_preset(PRESET_TOP_LEFT);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_TOP_RIGHT: {
-			_set_anchors_and_margins_preset(PRESET_TOP_RIGHT);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_BOTTOM_LEFT: {
-			_set_anchors_and_margins_preset(PRESET_BOTTOM_LEFT);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_BOTTOM_RIGHT: {
-			_set_anchors_and_margins_preset(PRESET_BOTTOM_RIGHT);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_CENTER_LEFT: {
-			_set_anchors_and_margins_preset(PRESET_CENTER_LEFT);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_CENTER_RIGHT: {
-			_set_anchors_and_margins_preset(PRESET_CENTER_RIGHT);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_CENTER_TOP: {
-			_set_anchors_and_margins_preset(PRESET_CENTER_TOP);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_CENTER_BOTTOM: {
-			_set_anchors_and_margins_preset(PRESET_CENTER_BOTTOM);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_CENTER: {
-			_set_anchors_and_margins_preset(PRESET_CENTER);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_TOP_WIDE: {
-			_set_anchors_and_margins_preset(PRESET_TOP_WIDE);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_LEFT_WIDE: {
-			_set_anchors_and_margins_preset(PRESET_LEFT_WIDE);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_RIGHT_WIDE: {
-			_set_anchors_and_margins_preset(PRESET_RIGHT_WIDE);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_BOTTOM_WIDE: {
-			_set_anchors_and_margins_preset(PRESET_BOTTOM_WIDE);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_VCENTER_WIDE: {
-			_set_anchors_and_margins_preset(PRESET_VCENTER_WIDE);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_HCENTER_WIDE: {
-			_set_anchors_and_margins_preset(PRESET_HCENTER_WIDE);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_WIDE: {
-			_set_anchors_and_margins_preset(Control::PRESET_WIDE);
-		} break;
-		case ANCHORS_AND_MARGINS_PRESET_KEEP_RATIO: {
-			_set_anchors_and_margins_to_keep_ratio();
-		} break;
-
-		case ANCHORS_PRESET_TOP_LEFT: {
-			_set_anchors_preset(PRESET_TOP_LEFT);
-		} break;
-		case ANCHORS_PRESET_TOP_RIGHT: {
-			_set_anchors_preset(PRESET_TOP_RIGHT);
-		} break;
-		case ANCHORS_PRESET_BOTTOM_LEFT: {
-			_set_anchors_preset(PRESET_BOTTOM_LEFT);
-		} break;
-		case ANCHORS_PRESET_BOTTOM_RIGHT: {
-			_set_anchors_preset(PRESET_BOTTOM_RIGHT);
-		} break;
-		case ANCHORS_PRESET_CENTER_LEFT: {
-			_set_anchors_preset(PRESET_CENTER_LEFT);
-		} break;
-		case ANCHORS_PRESET_CENTER_RIGHT: {
-			_set_anchors_preset(PRESET_CENTER_RIGHT);
-		} break;
-		case ANCHORS_PRESET_CENTER_TOP: {
-			_set_anchors_preset(PRESET_CENTER_TOP);
-		} break;
-		case ANCHORS_PRESET_CENTER_BOTTOM: {
-			_set_anchors_preset(PRESET_CENTER_BOTTOM);
-		} break;
-		case ANCHORS_PRESET_CENTER: {
-			_set_anchors_preset(PRESET_CENTER);
-		} break;
-		case ANCHORS_PRESET_TOP_WIDE: {
-			_set_anchors_preset(PRESET_TOP_WIDE);
-		} break;
-		case ANCHORS_PRESET_LEFT_WIDE: {
-			_set_anchors_preset(PRESET_LEFT_WIDE);
-		} break;
-		case ANCHORS_PRESET_RIGHT_WIDE: {
-			_set_anchors_preset(PRESET_RIGHT_WIDE);
-		} break;
-		case ANCHORS_PRESET_BOTTOM_WIDE: {
-			_set_anchors_preset(PRESET_BOTTOM_WIDE);
-		} break;
-		case ANCHORS_PRESET_VCENTER_WIDE: {
-			_set_anchors_preset(PRESET_VCENTER_WIDE);
-		} break;
-		case ANCHORS_PRESET_HCENTER_WIDE: {
-			_set_anchors_preset(PRESET_HCENTER_WIDE);
-		} break;
-		case ANCHORS_PRESET_WIDE: {
-			_set_anchors_preset(Control::PRESET_WIDE);
 		} break;
 
 		case ANIM_INSERT_KEY:
@@ -4967,7 +4662,6 @@ void CanvasItemEditor::_bind_methods() {
 	ClassDB::bind_method("_button_toggle_grid_snap", &CanvasItemEditor::_button_toggle_grid_snap);
 	ClassDB::bind_method(D_METHOD("_button_override_camera", "pressed"), &CanvasItemEditor::_button_override_camera);
 	ClassDB::bind_method(D_METHOD("_update_override_camera_button", "game_running"), &CanvasItemEditor::_update_override_camera_button);
-	ClassDB::bind_method("_button_toggle_anchor_mode", &CanvasItemEditor::_button_toggle_anchor_mode);
 	ClassDB::bind_method("_update_scroll", &CanvasItemEditor::_update_scroll);
 	ClassDB::bind_method("_update_scrollbars", &CanvasItemEditor::_update_scrollbars);
 	ClassDB::bind_method("_popup_callback", &CanvasItemEditor::_popup_callback);
@@ -4981,7 +4675,6 @@ void CanvasItemEditor::_bind_methods() {
 	ClassDB::bind_method("_queue_update_bone_list", &CanvasItemEditor::_update_bone_list);
 	ClassDB::bind_method("_update_bone_list", &CanvasItemEditor::_update_bone_list);
 	ClassDB::bind_method("_tree_changed", &CanvasItemEditor::_tree_changed);
-	ClassDB::bind_method("_selection_changed", &CanvasItemEditor::_selection_changed);
 	ClassDB::bind_method("_popup_warning_depop", &CanvasItemEditor::_popup_warning_depop);
 	ClassDB::bind_method(D_METHOD("_selection_result_pressed"), &CanvasItemEditor::_selection_result_pressed);
 	ClassDB::bind_method(D_METHOD("_selection_menu_hide"), &CanvasItemEditor::_selection_menu_hide);
@@ -5277,8 +4970,6 @@ CanvasItemEditor::CanvasItemEditor(EditorNode *p_editor) {
 	snap_target[1] = SNAP_TARGET_NONE;
 
 	selected_from_canvas = false;
-	anchors_mode = false;
-
 	skeleton_show_bones = true;
 
 	drag_type = DRAG_NONE;
@@ -5303,7 +4994,6 @@ CanvasItemEditor::CanvasItemEditor(EditorNode *p_editor) {
 	editor_selection = p_editor->get_editor_selection();
 	editor_selection->add_editor_plugin(this);
 	editor_selection->connect("selection_changed", this, "update");
-	editor_selection->connect("selection_changed", this, "_selection_changed");
 
 	editor->call_deferred("connect", "play_pressed", this, "_update_override_camera_button", make_binds(true));
 	editor->call_deferred("connect", "stop_pressed", this, "_update_override_camera_button", make_binds(false));
@@ -5588,26 +5278,6 @@ CanvasItemEditor::CanvasItemEditor(EditorNode *p_editor) {
 	p->add_shortcut(ED_SHORTCUT("canvas_item_editor/clear_guides", TTR("Clear Guides")), CLEAR_GUIDES);
 	p->add_separator();
 	p->add_check_shortcut(ED_SHORTCUT("canvas_item_editor/preview_canvas_scale", TTR("Preview Canvas Scale"), KEY_MASK_SHIFT | KEY_MASK_CMD | KEY_P), PREVIEW_CANVAS_SCALE);
-
-	presets_menu = memnew(MenuButton);
-	presets_menu->set_text(TTR("Layout"));
-	hb->add_child(presets_menu);
-	presets_menu->hide();
-	presets_menu->set_switch_on_hover(true);
-
-	p = presets_menu->get_popup();
-	p->connect("id_pressed", this, "_popup_callback");
-
-	anchors_popup = memnew(PopupMenu);
-	p->add_child(anchors_popup);
-	anchors_popup->set_name("Anchors");
-	anchors_popup->connect("id_pressed", this, "_popup_callback");
-
-	anchor_mode_button = memnew(ToolButton);
-	hb->add_child(anchor_mode_button);
-	anchor_mode_button->set_toggle_mode(true);
-	anchor_mode_button->hide();
-	anchor_mode_button->connect("toggled", this, "_button_toggle_anchor_mode");
 
 	animation_hb = memnew(HBoxContainer);
 	hb->add_child(animation_hb);

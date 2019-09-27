@@ -28,8 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef CONTROL_EDITOR_PLUGIN_H
-#define CONTROL_EDITOR_PLUGIN_H
+#ifndef CANVAS_ITEM_EDITOR_PLUGIN_H
+#define CANVAS_ITEM_EDITOR_PLUGIN_H
 
 #include "editor/editor_node.h"
 #include "editor/editor_plugin.h"
@@ -123,55 +123,6 @@ private:
 		UNLOCK_SELECTED,
 		GROUP_SELECTED,
 		UNGROUP_SELECTED,
-		ANCHORS_AND_MARGINS_PRESET_TOP_LEFT,
-		ANCHORS_AND_MARGINS_PRESET_TOP_RIGHT,
-		ANCHORS_AND_MARGINS_PRESET_BOTTOM_LEFT,
-		ANCHORS_AND_MARGINS_PRESET_BOTTOM_RIGHT,
-		ANCHORS_AND_MARGINS_PRESET_CENTER_LEFT,
-		ANCHORS_AND_MARGINS_PRESET_CENTER_RIGHT,
-		ANCHORS_AND_MARGINS_PRESET_CENTER_TOP,
-		ANCHORS_AND_MARGINS_PRESET_CENTER_BOTTOM,
-		ANCHORS_AND_MARGINS_PRESET_CENTER,
-		ANCHORS_AND_MARGINS_PRESET_TOP_WIDE,
-		ANCHORS_AND_MARGINS_PRESET_LEFT_WIDE,
-		ANCHORS_AND_MARGINS_PRESET_RIGHT_WIDE,
-		ANCHORS_AND_MARGINS_PRESET_BOTTOM_WIDE,
-		ANCHORS_AND_MARGINS_PRESET_VCENTER_WIDE,
-		ANCHORS_AND_MARGINS_PRESET_HCENTER_WIDE,
-		ANCHORS_AND_MARGINS_PRESET_WIDE,
-		ANCHORS_AND_MARGINS_PRESET_KEEP_RATIO,
-		ANCHORS_PRESET_TOP_LEFT,
-		ANCHORS_PRESET_TOP_RIGHT,
-		ANCHORS_PRESET_BOTTOM_LEFT,
-		ANCHORS_PRESET_BOTTOM_RIGHT,
-		ANCHORS_PRESET_CENTER_LEFT,
-		ANCHORS_PRESET_CENTER_RIGHT,
-		ANCHORS_PRESET_CENTER_TOP,
-		ANCHORS_PRESET_CENTER_BOTTOM,
-		ANCHORS_PRESET_CENTER,
-		ANCHORS_PRESET_TOP_WIDE,
-		ANCHORS_PRESET_LEFT_WIDE,
-		ANCHORS_PRESET_RIGHT_WIDE,
-		ANCHORS_PRESET_BOTTOM_WIDE,
-		ANCHORS_PRESET_VCENTER_WIDE,
-		ANCHORS_PRESET_HCENTER_WIDE,
-		ANCHORS_PRESET_WIDE,
-		MARGINS_PRESET_TOP_LEFT,
-		MARGINS_PRESET_TOP_RIGHT,
-		MARGINS_PRESET_BOTTOM_LEFT,
-		MARGINS_PRESET_BOTTOM_RIGHT,
-		MARGINS_PRESET_CENTER_LEFT,
-		MARGINS_PRESET_CENTER_RIGHT,
-		MARGINS_PRESET_CENTER_TOP,
-		MARGINS_PRESET_CENTER_BOTTOM,
-		MARGINS_PRESET_CENTER,
-		MARGINS_PRESET_TOP_WIDE,
-		MARGINS_PRESET_LEFT_WIDE,
-		MARGINS_PRESET_RIGHT_WIDE,
-		MARGINS_PRESET_BOTTOM_WIDE,
-		MARGINS_PRESET_VCENTER_WIDE,
-		MARGINS_PRESET_HCENTER_WIDE,
-		MARGINS_PRESET_WIDE,
 		ANIM_INSERT_KEY,
 		ANIM_INSERT_KEY_EXISTING,
 		ANIM_INSERT_POS,
@@ -189,7 +140,6 @@ private:
 		SKELETON_SHOW_BONES,
 		SKELETON_SET_IK_CHAIN,
 		SKELETON_CLEAR_IK_CHAIN
-
 	};
 
 	enum DragType {
@@ -253,8 +203,6 @@ private:
 	Point2 previous_update_view_offset;
 
 	bool selected_from_canvas;
-	bool anchors_mode;
-
 	Point2 grid_offset;
 	Point2 grid_step;
 	int primary_grid_steps;
@@ -369,12 +317,6 @@ private:
 	MenuButton *view_menu;
 	HBoxContainer *animation_hb;
 	MenuButton *animation_menu;
-
-	MenuButton *presets_menu;
-	PopupMenu *anchors_and_margins_popup;
-	PopupMenu *anchors_popup;
-
-	ToolButton *anchor_mode_button;
 
 	Button *key_loc_button;
 	Button *key_rot_button;
@@ -524,14 +466,8 @@ private:
 			const SnapTarget p_snap_target, List<const CanvasItem *> p_exceptions,
 			const Node *p_current);
 
-	void _set_anchors_preset(Control::LayoutPreset p_preset);
-	void _set_margins_preset(Control::LayoutPreset p_preset);
-	void _set_anchors_and_margins_preset(Control::LayoutPreset p_preset);
-	void _set_anchors_and_margins_to_keep_ratio();
-
-	void _button_toggle_anchor_mode(bool p_status);
-
 	VBoxContainer *controls_vb;
+
 	HBoxContainer *zoom_hb;
 	void _zoom_on_position(float p_zoom, Point2 p_position = Point2());
 	void _update_zoom_label();
@@ -641,8 +577,6 @@ public:
 
 	void focus_selection();
 
-	bool is_anchors_mode_enabled() { return anchors_mode; };
-
 	CanvasItemEditor(EditorNode *p_editor);
 };
 
@@ -718,4 +652,4 @@ public:
 	~CanvasItemEditorViewport();
 };
 
-#endif
+#endif // CANVAS_ITEM_EDITOR_PLUGIN_H

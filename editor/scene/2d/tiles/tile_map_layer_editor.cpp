@@ -4254,9 +4254,8 @@ void TileMapLayerEditor::_draw_overlay() {
 	Vector2i tile_shape_size = tile_set->get_tile_size();
 
 	// Draw tiles with invalid IDs in the grid.
-	TypedArray<Vector2i> used_cells = edited_layer->get_used_cells();
-	for (int i = 0; i < used_cells.size(); i++) {
-		Vector2i coords = used_cells[i];
+	for (const KeyValue<Vector2i, CellData> &kv : edited_layer->get_tile_map_layer_data()) {
+		Vector2i coords = kv.key;
 		int tile_source_id = edited_layer->get_cell_source_id(coords);
 		if (tile_source_id >= 0) {
 			Vector2i tile_atlas_coords = edited_layer->get_cell_atlas_coords(coords);
